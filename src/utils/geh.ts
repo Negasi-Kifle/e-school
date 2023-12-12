@@ -49,7 +49,7 @@ export default (
     }
   }
 
-  if (configs.env === "development") {
+  if (configs.env === "development" || configs.env === "local") {
     // Send error for different scenarios
     sendDevError(err, res);
   } else if (configs.env === "production" || configs.env === "qa") {

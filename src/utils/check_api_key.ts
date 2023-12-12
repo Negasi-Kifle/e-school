@@ -15,11 +15,11 @@ export default function checkAPIKey(
   next: NextFunction
 ) {
   if (!req.headers["x-api-key"]) {
-    return next(new AppError("Please provide valid API key", 403));
+    return next(new AppError("Please provide a valid API key", 403));
   }
 
   if (req.headers["x-api-key"] !== configs.api_key) {
-    return next(new AppError("Please provide valid API key", 403));
+    return next(new AppError("Please provide a valid API key", 403));
   }
   next();
 }
