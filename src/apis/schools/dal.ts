@@ -14,7 +14,29 @@ export default class School {
       throw error;
     }
   }
-
+ 
+  // Update a school
+  static async updateSchool(
+    data: SchoolRequest.IUpdateSchoolInput, id: string
+  ): Promise<ISchoolDoc | null> {
+    try {
+      const school = await SchoolModel.findByIdAndUpdate(id, data);
+      return school;
+    } catch (error) {
+      throw error;
+    }
+  }
+  // Update a school status
+  static async updateSchoolStatus(
+    data: SchoolRequest.IUpdateStatus, id: string
+  ): Promise<ISchoolDoc | null> {
+    try {
+      const school = await SchoolModel.findByIdAndUpdate(id, data);
+      return school;
+    } catch (error) {
+      throw error;
+    }
+  }
 
   // Get all schools
   static async getAllSchools(query?: RequestQuery): Promise<ISchoolDoc[]> {
@@ -51,11 +73,21 @@ export default class School {
     }
   }
 
+  // Get a school by owner id
+  static async getSchoolByOwner(id: string): Promise<ISchoolDoc | null> {
+    try {
+      const school = await SchoolModel.findOne({owner: id});
+      return school;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // Delete a school permaently
-  static async deleteSchool(id: string): Promise<ISchoolDoc | null> {
+  static async deleteSchool(id: string): Promise<any> {
     try {
       const school = await SchoolModel.findByIdAndDelete(id);
-      return school.value;
+      return school;
     } catch (error) {
       throw error;
     }

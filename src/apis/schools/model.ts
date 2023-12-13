@@ -30,16 +30,17 @@ const schoolSchema: Schema = new Schema(
     },
     status: {
       type: String,
-      required: [true, "School Level is required"],
+      required: [true, "Status is required"],
       enum: {
         values: ["Active", "Inactive"],
         message: "Invalid school status",
-        default: "Active"
       },
+      default: "Active"
     },
     owner: {
-      type: String,
-      required: [true, "Owner ID is required"],
+      type: Schema.ObjectId,
+      ref:"User",
+      required: [true, "Owner id is required"]
     },
     license_file: {
       type: String,

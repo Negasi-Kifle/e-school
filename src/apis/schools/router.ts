@@ -4,21 +4,70 @@ const router = Router();
 
 import {
   createSchool,
-  deleteAllSchools
+  deleteAllSchools,
+  deleteSchool,
+  getSchoolById,
+  getSchoolByOwner,
+  getSchools,
+  updateSchool,
+  updateSchoolStatus,
 } from "./controller";
 import {
+  changeSchoolStatus,
   createSchoolValidation,
   deleteAllSchoolsValidation,
+  updateSchoolValidation,
 } from "./validation";
 
 import validator from "../../utils/validator";
-
+import protect from "../../utils/protect";
+import auth from "../../utils/auth";
 
 router
   .route("/")
-  .post(validator(createSchoolValidation), createSchool)
-  .delete(validator(deleteAllSchoolsValidation), deleteAllSchools);
+  .post(
+    protect,
+    auth("Super-admin", "Admin", "Call-center"),
+    validator(createSchoolValidation),
+    createSchool
+  )
+  .get(protect, auth("Super-admin", "Admin", "Call-center"), getSchools)
+  .delete(
+    protect,
+    auth("Super-admin"),
+    validator(deleteAllSchoolsValidation),
+    deleteAllSchools
+  );
 
+router.patch(
+  "/status/:id",
+  protect,
+  auth("Super-admin", "Admin", "Call-center"),
+  validator(changeSchoolStatus),
+  updateSchoolStatus
+);
 
+router.get(
+  "/owner/:id",
+  protect,
+  auth("Super-admin", "Admin", "Call-center"),
+  getSchoolByOwner
+);
+
+router
+  .route("/:id")
+  .get(protect, auth("Super-admin", "Admin", "Call-center"), getSchoolById)
+  .patch(
+    protect,
+    auth("Super-admin", "Admin", "Call-center"),
+    validator(updateSchoolValidation),
+    updateSchool
+  )
+  .delete(
+    protect,
+    auth("Super-admin"),
+    validator(deleteAllSchoolsValidation),
+    deleteSchool
+  );
 
 export default router;
