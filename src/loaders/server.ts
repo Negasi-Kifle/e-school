@@ -8,7 +8,9 @@ import checkAPIKey from "../utils/check_api_key";
 import AppError from "../utils/app_error";
 
 import adminRouter from "../apis/admin/router";
+import userRouter from "../apis/users/router";
 import schoolsRouter from "../apis/schools/router";
+
 
 // Parse incoming requests
 app.use(express.json());
@@ -25,7 +27,9 @@ app.use("/api/v1/test", (req, res) => {
 
 // Mount endpoints with their respective router file
 app.use("/api/v1/admins", adminRouter);
+app.use("/api/v1/users", userRouter);
 app.use("/api/v1/schools", schoolsRouter);
+
 
 // Handle unknown url
 app.use("*", (req: Request, res: Response, next: NextFunction) => {
