@@ -2,10 +2,19 @@ import { Request, Response, NextFunction } from "express";
 import Admin from "../apis/admin/dal";
 import AppError from "./app_error";
 import verifyToken from "./verify_token";
-// import Client from "../api/client/dal";
+import User from "../apis/users/dal";
 
 export default async (req: Request, res: Response, next: NextFunction) => {
   try {
+    const trustRoles = ["Super-admin", "Admin", "Call-center"];
+    const clientRoles = [
+      "Owner",
+      "Director",
+      "Teacher",
+      "Assistant",
+      "Teacher",
+    ];
+
     // Token
     let token: string = "";
 
@@ -23,7 +32,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
     // Verify token
     const decodedData = verifyToken(token);
 
-    if (decodedData.user === "admin") {
+    if (trustRoles.includes(decodedData.role)) {
       // Check if the admin exists
       const admin = await Admin.getAdmin(decodedData.id);
       if (!admin) return next(new AppError("Admin does not exists", 400));
@@ -67,40 +76,37 @@ export default async (req: Request, res: Response, next: NextFunction) => {
 
       // Attach admin on request object
       req.user = admin;
-    } else if (decodedData.user === "client") {
+    } else if (clientRoles.includes(decodedData.role)) {
       // Get client
-      // const client = await Client.getClientById(decodedData.id);
-      // if (!client)
-      //   return next(new AppError("Client does not exists", 400, true));
-      // // Check the account status of the client
-      // if (!client.account_status) {
-      //   return next(
-      //     new AppError(
-      //       "Your account is Inactive. Communicate with the owner to Activate it",
-      //       403
-      //     )
-      //   );
-      // }
-      // // Check if phone number is changed
-      // if (client.checkPhonenumberChangedAt(decodedData.iat as number)) {
-      //   return next(
-      //     new AppError(
-      //       "You have changed your phone number recently. Please login again",
-      //       400
-      //     )
-      //   );
-      // }
-      // // Check if pin is changed
-      // if (client.checkPinChangedAt(decodedData.iat as number)) {
-      //   return next(
-      //     new AppError(
-      //       "You have changed your pin recently. Please login again",
-      //       400
-      //     )
-      //   );
-      // }
-      // // Attach client on request object
-      // req.user = client;
+      const user = await User.getUserById(decodedData.id);
+      if (!user) return next(new AppError("User does not exist", 400));
+
+      // Check the account status of the user
+      if (user.status === "Inactive") {
+        return next(
+          new AppError(
+            "Your account is Inactive. Communicate with the admins to Activate it",
+            403
+          )
+        );
+      }
+      // Check if credential is changed
+      if (user.is_credential_changed) {
+        return next(
+          new AppError(
+            "You have changed your credential recently. Please login again",
+            400
+          )
+        );
+      }
+
+      // Check user is not using the default password
+      if (user.is_default_pswd) {
+        return next(new AppError("Please change your default password", 400));
+      }
+
+      // Attach client on request object
+      req.user = user;
     } else {
       return next(new AppError("Unknown user", 403));
     }

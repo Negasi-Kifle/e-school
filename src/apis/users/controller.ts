@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
 import AppError from "../../utils/app_error";
-import User from "./dal";
+import Users from "./dal";
 import generate_password from "../../utils/generate_password";
 
 // Create user doc
@@ -13,7 +13,7 @@ export const createUser: RequestHandler = async (req, res, next) => {
     data.password = generate_password();
 
     // Create user
-    const user = await User.createUser(data);
+    const user = await Users.createUser(data);
 
     // Response
     res.status(200).json({
@@ -21,6 +21,22 @@ export const createUser: RequestHandler = async (req, res, next) => {
       message: "New user created successfully",
       data: { user },
       default_password: data.password,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Get all users
+export const getAllUsers: RequestHandler = async (req, res, next) => {
+  try {
+    const users = await Users.getAllUsers();
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      results: users.length,
+      data: { users },
     });
   } catch (error) {
     next(error);

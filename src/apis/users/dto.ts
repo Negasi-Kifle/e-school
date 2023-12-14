@@ -13,6 +13,7 @@ export default interface IUsersDoc extends Document {
   tenant_id: string;
   address: string;
   prof_img: IProfileImg;
+  comparePassword: (candidatePassword: string, password: string) => boolean;
 }
 
 // Keys in a profile image

@@ -14,4 +14,24 @@ export default class UserDAL {
       throw error;
     }
   }
+
+  // Get all users
+  static async getAllUsers(): Promise<IUsersDoc[]> {
+    try {
+      const users = await User.find();
+      return users;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Get user by id
+  static async getUserById(id: string): Promise<IUsersDoc | null> {
+    try {
+      const user = await User.findById(id);
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
