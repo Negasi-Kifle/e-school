@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import IUsersDoc from "./dto";
-import validator from "validator";
+import bcrypt from "bcryptjs";
 
 // Users schema
 const userSchema = new Schema(
@@ -42,7 +42,7 @@ const userSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    tenantId: String,
+    tenant_id: String,
     address: {
       type: String,
       required: [true, "Address is requried"],
@@ -52,7 +52,7 @@ const userSchema = new Schema(
         type: String,
         required: [true, "Secure Url of profile picture is required"],
       },
-      pubic_id: {
+      public_id: {
         type: String,
         required: [true, "Public Id of profile picture is required"],
       },
@@ -67,6 +67,13 @@ const userSchema = new Schema(
     toObject: { virtuals: true },
   }
 );
+
+// Pre save hook
+userSchema.pre("save", function (this: IUsersDoc, next) {
+  if (!this.isModified("password")) return next();
+  this.password = bcrypt.hashSync(this.password, 12);
+  next();
+});
 
 // Users model
 const User = mongoose.model<IUsersDoc>("User", userSchema);
