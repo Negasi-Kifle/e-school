@@ -14,11 +14,23 @@ export const validateCreateOwnerAPI = Joi.object({
     "any.required": "Phone number is requried",
     "string.empty": "Phone number is requried",
   }),
-  role: Joi.string().required().messages({
-    "any.required": "Role is requried",
-    "string.empty": "Role is requried",
+  role: Joi.string()
+    .valid("Owner", "Director", "Teacher", "Assistant", "Teacher")
+    .required()
+    .messages({
+      "any.required": "Role is required",
+      "string.empty": "Role is required",
+      "any.only":
+        "Role must be one of 'Owner', 'Director', 'Assistant', or 'Teacher'",
+    }),
+  tenant_id: Joi.string().when("role", {
+    is: Joi.not("Owner"),
+    then: Joi.string().required().messages({
+      "any.required": "Tenant ID is required",
+      "string.empty": "Tenant ID is required",
+    }),
+    otherwise: Joi.string().allow("").optional(), // If role is not 'Owner', tenant_id is optional
   }),
-  tenant_id: Joi.string().required(),
   address: Joi.string().required().messages({
     "any.required": "Address is requried",
     "string.empty": "Address is requried",

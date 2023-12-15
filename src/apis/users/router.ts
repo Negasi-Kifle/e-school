@@ -9,6 +9,7 @@ import {
   deleteAllOwners,
   deleteOwnerById,
   getAllOwners,
+  getAllUsers,
   getOwnerById,
 } from "./controller";
 
@@ -33,6 +34,8 @@ router
   .route("/owners/:id")
   .get(protect, auth("Owner", "Super-admin"), getOwnerById)
   .delete(protect, auth("Super-admin"), deleteOwnerById);
+
+router.route("/").get(protect, auth("Super-admin"), getAllUsers);
 
 // Export router
 export default router;

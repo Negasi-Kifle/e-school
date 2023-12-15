@@ -18,10 +18,10 @@ export default class UserDAL {
     }
   }
 
-  // Get all users
+  // Get all owners
   static async getAllOwners(query?: RequestQuery): Promise<IUsersDoc[]> {
     try {
-      const apiFeatures = new APIFeatures(User.find(), query)
+      const apiFeatures = new APIFeatures(User.find({ role: "Owner" }), query)
         .paginate()
         .filter()
         .project()
@@ -34,8 +34,24 @@ export default class UserDAL {
     }
   }
 
+  // Get all users in DB
+  static async getAllUsers(query?: RequestQuery): Promise<IUsersDoc[]> {
+    try {
+      const apiFeatures = new APIFeatures(User.find(), query)
+        .paginate()
+        .project()
+        .sort()
+        .filter();
+
+      const users = await apiFeatures.dbQuery;
+      return users;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // Get user by id
-  static async getOwnerById(id: string): Promise<IUsersDoc | null> {
+  static async getUserById(id: string): Promise<IUsersDoc | null> {
     try {
       const user = await User.findById(id);
       return user;

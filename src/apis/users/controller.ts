@@ -47,7 +47,7 @@ export const getAllOwners: RequestHandler = async (req, res, next) => {
 // Get user by id
 export const getOwnerById: RequestHandler = async (req, res, next) => {
   try {
-    const owner = await Users.getOwnerById(req.params.id);
+    const owner = await Users.getUserById(req.params.id);
     if (!owner) return next(new AppError("Owner not found", 404));
 
     // Response
@@ -92,6 +92,22 @@ export const deleteOwnerById: RequestHandler = async (req, res, next) => {
     res.status(200).json({
       status: "SUCCESS",
       message: "Owner deleted permanently",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Get all users in DB
+export const getAllUsers: RequestHandler = async (req, res, next) => {
+  try {
+    const users = await Users.getAllUsers(req.query);
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      results: users.length,
+      data: { users },
     });
   } catch (error) {
     next(error);
