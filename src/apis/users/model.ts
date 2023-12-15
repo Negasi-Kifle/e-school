@@ -24,7 +24,7 @@ const userSchema = new Schema(
     password: { type: String, required: [true, "Password is required"] },
     is_default_pswd: { type: Boolean, default: true },
     is_credential_changed: { type: Boolean, default: false },
-    tenant_id: { type: Schema.ObjectId, ref: "SchoolModel" },
+    tenant_id: { type: Schema.ObjectId, ref: "School" },
     address: { type: String, required: [true, "Address is requried"] },
     prof_img: {
       secure_url: {
@@ -54,9 +54,14 @@ userSchema.pre("save", function (this: IUsersDoc, next) {
   next();
 });
 
-// userSchema.checkPhonenumberChangedAt(){
-
-// }
+// Populate school info in find method
+userSchema.pre(/^find/, function (this: IUsersDoc, next) {
+  this.populate({
+    path: "tenant_id",
+    select: "school_name school_address level status",
+  });
+  next();
+});
 
 // Users model
 const User = mongoose.model<IUsersDoc>("User", userSchema);

@@ -25,18 +25,21 @@ export interface IProfileImg {
 // Structure of incoming data
 declare global {
   namespace UserRequests {
-    interface ICreateInput {
+    interface ICreateOwnerInput {
       first_name: string;
       last_name: string;
       phone_num: string;
-      role: string;
-      status: "Active" | "Inactive";
+      role: "Owner";
+      status: "Active";
       password: string;
-      is_default_pswd: boolean;
-      is_credential_changed: boolean;
+      is_default_pswd: true;
+      is_credential_changed: false;
       tenant_id: string;
       address: string;
       prof_img: IProfileImg;
+    }
+    interface IDeleteAll {
+      delete_key: string;
     }
   }
 }
