@@ -3,18 +3,36 @@ const router = Router();
 import protect from "../../utils/protect";
 import auth from "../../utils/auth";
 import validate from "../../utils/validator";
-import { validateCreateAPI } from "./validation";
-import { createUser } from "./controller";
+import { validateCreateOwnerAPI, validateDeleteAll } from "./validation";
+import {
+  createOwner,
+  deleteAllOwners,
+  deleteOwnerById,
+  getAllOwners,
+  getOwnerById,
+} from "./controller";
 
-// Create user data
+// Mount routes with their respective controller methods
 router
-  .route("/")
+  .route("/owners")
   .post(
     protect,
     auth("Owner", "Super-admin"),
-    validate(validateCreateAPI),
-    createUser
+    validate(validateCreateOwnerAPI),
+    createOwner
+  )
+  .get(protect, auth("Owner", "Super-admin"), getAllOwners)
+  .delete(
+    protect,
+    auth("Super-admin"),
+    validate(validateDeleteAll),
+    deleteAllOwners
   );
+
+router
+  .route("/owners/:id")
+  .get(protect, auth("Owner", "Super-admin"), getOwnerById)
+  .delete(protect, auth("Super-admin"), deleteOwnerById);
 
 // Export router
 export default router;

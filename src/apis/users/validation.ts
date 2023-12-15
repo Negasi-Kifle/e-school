@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 // Validate the API that create a user data
-export const validateCreateAPI = Joi.object({
+export const validateCreateOwnerAPI = Joi.object({
   first_name: Joi.string().required().messages({
     "any.required": "First name is requried",
     "string.empty": "First name is requried",
@@ -33,4 +33,12 @@ export const validateCreateAPI = Joi.object({
       "string.empty": "Public Id of profile image is requried",
     }),
   }).required(),
+});
+
+// Validate that deletes all users
+export const validateDeleteAll = Joi.object({
+  delete_key: Joi.string().required().messages({
+    "any.required": "Please provide a valid delete key",
+    "string.empty": "Please provide a valid delete key",
+  }),
 });

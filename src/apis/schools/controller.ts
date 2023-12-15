@@ -20,7 +20,13 @@ export const createSchool: RequestHandler = async (req, res, next) => {
     }
 
     // Create a school
-    await School.createSchool({ school_name, school_address, license, level, owner});
+    await School.createSchool({
+      school_name,
+      school_address,
+      license,
+      level,
+      owner,
+    });
 
     // Respond
     res.status(200).json({
@@ -66,13 +72,13 @@ export const updateSchool: RequestHandler = async (req, res, next) => {
 
 export const updateSchoolStatus: RequestHandler = async (req, res, next) => {
   try {
-    const data = <SchoolRequest.IUpdateStatus> req.value;
+    const data = <SchoolRequest.IUpdateStatus>req.value;
 
-    const schools = await School.updateSchoolStatus(data ,req.params.id);
+    const schools = await School.updateSchoolStatus(data, req.params.id);
 
     res.status(200).json({
       status: "SUCCESS",
-      message : "School status changed successfuly",
+      message: "School status changed successfuly",
       data: { schools },
     });
   } catch (err) {
@@ -85,21 +91,19 @@ export const deleteSchool: RequestHandler = async (req, res, next) => {
     const id = req.params.id;
 
     const school = await School.deleteSchool(id);
-        
+
     if (!school) {
       return next(new AppError("School does not exists", 400));
     }
 
     res.status(200).json({
       status: "SUCCESS",
-      message : "School deleted successfuly.",
+      message: "School deleted successfuly.",
     });
-
   } catch (err) {
     next(err);
   }
 };
-
 
 export const getSchools: RequestHandler = async (req, res, next) => {
   try {
