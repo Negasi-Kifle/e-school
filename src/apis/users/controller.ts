@@ -133,6 +133,10 @@ export const login: RequestHandler = async (req, res, next) => {
     // Generate token
     const token = generate_token({ id: user.id, role: user.role });
 
+    // Set is_credential_changed field to false
+    user.is_credential_changed = false;
+    await user.save();
+
     // Response
     res.status(200).json({
       status: "SUCCESS",
@@ -161,6 +165,33 @@ export const updateProfile: RequestHandler = async (req, res, next) => {
     res.status(200).json({
       status: "SUCCESS",
       message: "Profile updated successfully",
+      data: { user },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Change password
+export const changePswd: RequestHandler = async (req, res, next) => {
+  try {
+    // Incoming data
+    const data = <UserRequests.IChangePswd>req.value;
+
+    // Logged in user
+    const loggedInUser = <IUsersDoc>req.user;
+
+    // Check password
+    if (!loggedInUser.comparePassword(data.curr_pswd, loggedInUser.password))
+      return next(new AppError("Current password is not correct", 400));
+
+    // Update user password
+    const user = await Users.changePswd(data.new_pswd, loggedInUser);
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      message: "You have successfully changed your password",
       data: { user },
     });
   } catch (error) {

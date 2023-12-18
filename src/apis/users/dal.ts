@@ -101,4 +101,20 @@ export default class UserDAL {
       throw error;
     }
   }
+
+  // Change password
+  static async changePswd(
+    password: string,
+    user: IUsersDoc
+  ): Promise<IUsersDoc | null> {
+    try {
+      user.password = password;
+      user.is_default_pswd = false;
+      user.is_credential_changed = true;
+      await user.save();
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

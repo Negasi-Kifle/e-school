@@ -13,7 +13,7 @@ export default interface IUsersDoc extends Document {
   tenant_id: string;
   address: string;
   prof_img: IProfileImg;
-  comparePassword: (candidatePassword: string, password: string) => boolean;
+  comparePassword: (incomingPswd: string, pswdInDB: string) => boolean;
 }
 
 // Keys in a profile image
@@ -49,6 +49,10 @@ declare global {
       first_name: string;
       last_name: string;
       address: string;
+    }
+    interface IChangePswd {
+      curr_pswd: string;
+      new_pswd: string;
     }
   }
 }

@@ -4,12 +4,14 @@ import protect from "../../utils/protect";
 import auth from "../../utils/auth";
 import validate from "../../utils/validator";
 import {
+  validateChangePswdAPI,
   validateCreateOwnerAPI,
   validateDeleteAll,
   validateLogin,
   validateUpdateProfileAPI,
 } from "./validation";
 import {
+  changePswd,
   createOwner,
   deleteAllOwners,
   deleteOwnerById,
@@ -51,6 +53,13 @@ router.patch(
   protect,
   validate(validateUpdateProfileAPI),
   updateProfile
+);
+
+router.patch(
+  "/changepswd",
+  protect,
+  validate(validateChangePswdAPI),
+  changePswd
 );
 
 // Export router

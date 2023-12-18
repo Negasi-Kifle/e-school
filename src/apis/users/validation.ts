@@ -79,3 +79,15 @@ export const validateUpdateProfileAPI = Joi.object({
     "string.empty": "Address can not be empty",
   }),
 });
+
+// Validate the change_password API
+export const validateChangePswdAPI = Joi.object({
+  curr_pswd: Joi.string().required().messages({
+    "any.required": "Please enter your current password",
+    "string.empty": "Please enter your current password",
+  }),
+  new_pswd: Joi.string().required().messages({
+    "any.required": "Please enter new password",
+    "string.empty": "Please enter new password",
+  }),
+});
