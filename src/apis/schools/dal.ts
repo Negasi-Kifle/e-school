@@ -14,10 +14,11 @@ export default class School {
       throw error;
     }
   }
- 
+
   // Update a school
   static async updateSchool(
-    data: SchoolRequest.IUpdateSchoolInput, id: string
+    data: SchoolRequest.IUpdateSchoolInput,
+    id: string
   ): Promise<ISchoolDoc | null> {
     try {
       const school = await SchoolModel.findByIdAndUpdate(id, data);
@@ -28,7 +29,8 @@ export default class School {
   }
   // Update a school status
   static async updateSchoolStatus(
-    data: SchoolRequest.IUpdateStatus, id: string
+    data: SchoolRequest.IUpdateStatus,
+    id: string
   ): Promise<ISchoolDoc | null> {
     try {
       const school = await SchoolModel.findByIdAndUpdate(id, data);
@@ -42,10 +44,17 @@ export default class School {
   static async getAllSchools(query?: RequestQuery): Promise<ISchoolDoc[]> {
     try {
       // const schools = await SchoolModel.find();
-      const apiFeature = new APIFeatures<ISchoolDoc>(SchoolModel.find(), query)
+      const apiFeature = new APIFeatures<ISchoolDoc>(
+        SchoolModel.find().populate({
+          path: "owner",
+          select: "first_name last_name phone_num",
+        }),
+        query
+      )
         .filter()
         .sort()
         .project();
+
       const schools = await apiFeature.dbQuery;
       return schools;
     } catch (error) {
@@ -54,9 +63,11 @@ export default class School {
   }
 
   // Get a school
-  static async getSchoolByName(school_name: string): Promise<ISchoolDoc | null> {
+  static async getSchoolByName(
+    school_name: string
+  ): Promise<ISchoolDoc | null> {
     try {
-      const school = await SchoolModel.findOne({school_name});
+      const school = await SchoolModel.findOne({ school_name });
       return school;
     } catch (error) {
       throw error;
@@ -76,7 +87,7 @@ export default class School {
   // Get a school by owner id
   static async getSchoolByOwner(id: string): Promise<ISchoolDoc | null> {
     try {
-      const school = await SchoolModel.findOne({owner: id});
+      const school = await SchoolModel.findOne({ owner: id });
       return school;
     } catch (error) {
       throw error;

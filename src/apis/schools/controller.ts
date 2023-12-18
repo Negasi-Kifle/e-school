@@ -4,34 +4,36 @@ import School from "./dal";
 import ISchoolDoc from "./dto";
 import configs from "../../configs";
 import IAdminDoc from "../admin/dto";
+import UserDAL from "../users/dal";
 
 // Create a school
 export const createSchool: RequestHandler = async (req, res, next) => {
   try {
     // Get body
-    const { school_name, school_address, license, level, owner } = <
-      SchoolRequest.ICreateSchoolInput
-    >req.value;
+    const data = <SchoolRequest.ICreateSchoolInput>req.value;
+
+    // Check the owner exists
+    const owner = await UserDAL.getOwnerById(data.owner);
+    if (!owner) return next(new AppError("Unknown owner selected", 404));
 
     //check school exists
-    const school = await School.getSchoolByName(school_name);
-    if (school) {
+    const schoolInDb = await School.getSchoolByName(data.school_name);
+    if (schoolInDb) {
       return next(new AppError("School already exists", 400));
     }
 
     // Create a school
-    await School.createSchool({
-      school_name,
-      school_address,
-      license,
-      level,
-      owner,
-    });
+    const school = await School.createSchool(data);
+
+    // Update "tenant_id" field of the owner
+    owner.tenant_id = school.id;
+    await owner.save();
 
     // Respond
     res.status(200).json({
       status: "SUCCESS",
       message: `School created successfuly!`,
+      data: { school },
     });
   } catch (error) {
     next(error);
@@ -111,6 +113,7 @@ export const getSchools: RequestHandler = async (req, res, next) => {
 
     res.status(200).json({
       status: "SUCCESS",
+      results: schools.length,
       data: { schools },
     });
   } catch (err) {

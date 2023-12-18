@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 // Validate the API that create a user data
-export const validateCreateOwnerAPI = Joi.object({
+export const validateCreateUserAPI = Joi.object({
   first_name: Joi.string().required().messages({
     "any.required": "First name is requried",
     "string.empty": "First name is requried",

@@ -6,6 +6,6 @@ export default (): string => {
     uppercase: true,
     lowercase: true,
     numbers: true,
-    symbols: true,
+    symbols: false,
   });
 };

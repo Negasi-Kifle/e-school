@@ -5,7 +5,7 @@ import auth from "../../utils/auth";
 import validate from "../../utils/validator";
 import {
   validateChangePswdAPI,
-  validateCreateOwnerAPI,
+  validateCreateUserAPI,
   validateDeleteAll,
   validateLogin,
   validateUpdateProfileAPI,
@@ -13,22 +13,36 @@ import {
 import {
   changePswd,
   createOwner,
+  createUser,
   deleteAllOwners,
+  deleteAllUsers,
   deleteOwnerById,
+  deleteTenantUsers,
   getAllOwners,
   getAllUsers,
   getOwnerById,
+  getTenantUsers,
   login,
   updateProfile,
 } from "./controller";
 
 // Mount routes with their respective controller methods
 router
+  .route("/")
+  .get(protect, auth("Super-admin"), getAllUsers)
+  .delete(
+    protect,
+    auth("Super-admin"),
+    validate(validateDeleteAll),
+    deleteAllUsers
+  );
+
+router
   .route("/owners")
   .post(
     protect,
     auth("Owner", "Super-admin"),
-    validate(validateCreateOwnerAPI),
+    validate(validateCreateUserAPI),
     createOwner
   )
   .get(protect, auth("Owner", "Super-admin"), getAllOwners)
@@ -61,6 +75,22 @@ router.patch(
   validate(validateChangePswdAPI),
   changePswd
 );
+
+router
+  .route("/tenant/:tenantId")
+  .post(
+    protect,
+    auth("Super-admin", "Owner"),
+    validate(validateCreateUserAPI),
+    createUser
+  )
+  .delete(
+    protect,
+    auth("Owner"),
+    validate(validateDeleteAll),
+    deleteTenantUsers
+  )
+  .get(protect, auth("Super-admin", "Owner"), getTenantUsers);
 
 // Export router
 export default router;

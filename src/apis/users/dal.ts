@@ -60,6 +60,16 @@ export default class UserDAL {
     }
   }
 
+  // Get owner by id
+  static async getOwnerById(id: string): Promise<IUsersDoc | null> {
+    try {
+      const owner = await User.findOne({ _id: id, role: "Owner" });
+      return owner;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // Delete all user in DB
   static async deleteAllOwners() {
     try {
@@ -74,6 +84,19 @@ export default class UserDAL {
     try {
       const deletedUser = await User.findByIdAndDelete(id);
       return deletedUser;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Delete all users in DB
+  static async deleteAllUsers(role?: string) {
+    try {
+      if (role) {
+        await User.deleteMany({ role });
+      } else {
+        await User.deleteMany();
+      }
     } catch (error) {
       throw error;
     }
@@ -116,6 +139,25 @@ export default class UserDAL {
       user.is_credential_changed = true;
       await user.save();
       return user;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Delete users in tenant
+  static async deleteTenantUsers(tenant_id: string) {
+    try {
+      await User.deleteMany({ tenant_id });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Get all users of a tenant
+  static async getTenantUsers(tenant_id: string): Promise<IUsersDoc[]> {
+    try {
+      const tenantUsers = await User.find({ tenant_id });
+      return tenantUsers;
     } catch (error) {
       throw error;
     }
