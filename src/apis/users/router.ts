@@ -5,7 +5,7 @@ import auth from "../../utils/auth";
 import validate from "../../utils/validator";
 import {
   validateChangePswdAPI,
-  validateCreateOwnerAPI,
+  validateCreateUserAPI,
   validateDeleteAll,
   validateLogin,
   validateUpdateProfileAPI,
@@ -13,6 +13,7 @@ import {
 import {
   changePswd,
   createOwner,
+  createUser,
   deleteAllOwners,
   deleteOwnerById,
   getAllOwners,
@@ -28,7 +29,7 @@ router
   .post(
     protect,
     auth("Owner", "Super-admin"),
-    validate(validateCreateOwnerAPI),
+    validate(validateCreateUserAPI),
     createOwner
   )
   .get(protect, auth("Owner", "Super-admin"), getAllOwners)
@@ -61,6 +62,15 @@ router.patch(
   validate(validateChangePswdAPI),
   changePswd
 );
+
+router
+  .route("/tenant")
+  .post(
+    protect,
+    auth("Super-admin", "Owner"),
+    validate(validateCreateUserAPI),
+    createUser
+  );
 
 // Export router
 export default router;

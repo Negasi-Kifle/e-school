@@ -5,6 +5,7 @@ import generate_password from "../../utils/generate_password";
 import configs from "../../configs";
 import generate_token from "../../utils/generate_token";
 import IUsersDoc from "./dto";
+import School from "../schools/dal";
 
 // Create user doc
 export const createOwner: RequestHandler = async (req, res, next) => {
@@ -193,6 +194,44 @@ export const changePswd: RequestHandler = async (req, res, next) => {
       status: "SUCCESS",
       message: "You have successfully changed your password",
       data: { user },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Create user in a tenant
+export const createUser: RequestHandler = async (req, res, next) => {
+  try {
+    // Incoming data
+    const data = <UserRequests.ICreateUser>req.value;
+
+    // If it is an owner trying to create a user, check he/she owns the school
+    const loggedInUser = <IUsersDoc>req.user;
+    if (
+      loggedInUser.role === "Owner" &&
+      loggedInUser.tenant_id !== data.tenant_id
+    ) {
+      return next(new AppError("You don't own the school", 400));
+    }
+
+    // Check school exists
+    const school = await School.getSchool(data.tenant_id);
+    if (!school) return next(new AppError("Unknown school selected", 404));
+    data.tenant_id = school.id;
+
+    // Generate password
+    data.password = generate_password();
+
+    // Create user
+    const user = await Users.createUser(data);
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      message: "User account created successfully",
+      data: { user },
+      default_password: data.password,
     });
   } catch (error) {
     next(error);

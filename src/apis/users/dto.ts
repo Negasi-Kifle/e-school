@@ -29,7 +29,7 @@ declare global {
       first_name: string;
       last_name: string;
       phone_num: string;
-      role: "Owner";
+      role: string;
       status: "Active";
       password: string;
       is_default_pswd: true;
@@ -53,6 +53,19 @@ declare global {
     interface IChangePswd {
       curr_pswd: string;
       new_pswd: string;
+    }
+    interface ICreateUser {
+      first_name: string;
+      last_name: string;
+      phone_num: string;
+      role: string;
+      status: "Active";
+      password: string;
+      is_default_pswd: true;
+      is_credential_changed: false;
+      tenant_id: string;
+      address: string;
+      prof_img: IProfileImg;
     }
   }
 }
