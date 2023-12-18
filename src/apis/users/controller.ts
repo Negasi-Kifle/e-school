@@ -206,11 +206,13 @@ export const createUser: RequestHandler = async (req, res, next) => {
     // Incoming data
     const data = <UserRequests.ICreateUser>req.value;
 
+    const tenantId = req.params.tenantId; // Tenant id from req.params
+
     // If it is an owner trying to create a user, check he/she owns the school
     const loggedInUser = <IUsersDoc>req.user;
     if (
       loggedInUser.role === "Owner" &&
-      loggedInUser.tenant_id !== data.tenant_id
+      (!loggedInUser.tenant_id || loggedInUser.tenant_id !== tenantId)
     ) {
       return next(new AppError("You don't own the school", 400));
     }

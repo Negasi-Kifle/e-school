@@ -64,7 +64,7 @@ router.patch(
 );
 
 router
-  .route("/tenant")
+  .route("/tenant/:tenantId")
   .post(
     protect,
     auth("Super-admin", "Owner"),
