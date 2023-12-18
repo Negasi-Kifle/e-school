@@ -66,12 +66,15 @@ export const getOwnerById: RequestHandler = async (req, res, next) => {
 // Delete all users in DB
 export const deleteAllOwners: RequestHandler = async (req, res, next) => {
   try {
+    // Delete key from incoming data
     const { delete_key } = <UserRequests.IDeleteAll>req.value;
+
     // Check delete key
     if (delete_key !== configs.delete_key) {
       return next(new AppError("Please provide a valid delete key", 400));
     }
 
+    // Delete all owners
     await Users.deleteAllOwners();
 
     // Response
@@ -95,6 +98,25 @@ export const deleteOwnerById: RequestHandler = async (req, res, next) => {
     res.status(200).json({
       status: "SUCCESS",
       message: "Owner deleted permanently",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Delete all users in DB - only for trust admins
+export const deleteAllUsers: RequestHandler = async (req, res, next) => {
+  try {
+    // Role from request query
+    const { role } = req.query;
+
+    // Delete users
+    await Users.deleteAllUsers(role as string);
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      message: `All users with ${role} role deleted permanently`,
     });
   } catch (error) {
     next(error);
@@ -283,7 +305,7 @@ export const getTenantUsers: RequestHandler = async (req, res, next) => {
       loggedInUser.role === "Owner" &&
       (!loggedInUser.tenant_id || loggedInUser.tenant_id !== tenantId)
     ) {
-      return next(new AppError("You don't own the school", 400));
+      return next(new AppError("You don't own this school", 400));
     }
 
     const tenantUsers = await Users.getTenantUsers(req.params.tenantId);
