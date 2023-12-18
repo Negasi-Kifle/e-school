@@ -95,7 +95,10 @@ export default class UserDAL {
     data: UserRequests.IUpdateProfile
   ): Promise<IUsersDoc | null> {
     try {
-      const user = await User.findByIdAndUpdate(id, data);
+      const user = await User.findByIdAndUpdate(id, data, {
+        runValidators: true,
+        new: true,
+      });
       return user;
     } catch (error) {
       throw error;
