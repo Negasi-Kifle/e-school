@@ -32,17 +32,17 @@ export const validateCreateOwnerAPI = Joi.object({
     otherwise: Joi.string().allow("").optional(), // If role is not 'Owner', tenant_id is optional
   }),
   address: Joi.string().required().messages({
-    "any.required": "Address is requried",
-    "string.empty": "Address is requried",
+    "any.required": "Address is required",
+    "string.empty": "Address is required",
   }),
   prof_img: Joi.object({
     secure_url: Joi.string().required().messages({
-      "any.required": "Secure URL of profile image is requried",
-      "string.empty": "Secure URL of profile image is requried",
+      "any.required": "Secure URL of profile image is required",
+      "string.empty": "Secure URL of profile image is required",
     }),
     public_id: Joi.string().required().messages({
-      "any.required": "Public Id of profile image is requried",
-      "string.empty": "Public Id of profile image is requried",
+      "any.required": "Public Id of profile image is required",
+      "string.empty": "Public Id of profile image is required",
     }),
   }).required(),
 });
@@ -52,5 +52,30 @@ export const validateDeleteAll = Joi.object({
   delete_key: Joi.string().required().messages({
     "any.required": "Please provide a valid delete key",
     "string.empty": "Please provide a valid delete key",
+  }),
+});
+
+// Validate the login-api
+export const validateLogin = Joi.object({
+  phone_num: Joi.string().required().messages({
+    "any.required": "Phone number is required",
+    "string.empty": "Phone number is required",
+  }),
+  password: Joi.string().required().messages({
+    "any.required": "Password is required",
+    "string.empty": "Password is required",
+  }),
+});
+
+// Validate ypdate-profile API
+export const validateUpdateProfileAPI = Joi.object({
+  first_name: Joi.string().messages({
+    "string.empty": "First can not be empty",
+  }),
+  last_name: Joi.string().messages({
+    "string.empty": "Last name can not be empty",
+  }),
+  address: Joi.string().messages({
+    "string.empty": "Address can not be empty",
   }),
 });

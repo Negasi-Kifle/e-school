@@ -41,5 +41,14 @@ declare global {
     interface IDeleteAll {
       delete_key: string;
     }
+    interface ILogin {
+      phone_num: string;
+      password: string;
+    }
+    interface IUpdateProfile {
+      first_name: string;
+      last_name: string;
+      address: string;
+    }
   }
 }

@@ -3,7 +3,12 @@ const router = Router();
 import protect from "../../utils/protect";
 import auth from "../../utils/auth";
 import validate from "../../utils/validator";
-import { validateCreateOwnerAPI, validateDeleteAll } from "./validation";
+import {
+  validateCreateOwnerAPI,
+  validateDeleteAll,
+  validateLogin,
+  validateUpdateProfileAPI,
+} from "./validation";
 import {
   createOwner,
   deleteAllOwners,
@@ -11,6 +16,8 @@ import {
   getAllOwners,
   getAllUsers,
   getOwnerById,
+  login,
+  updateProfile,
 } from "./controller";
 
 // Mount routes with their respective controller methods
@@ -36,6 +43,15 @@ router
   .delete(protect, auth("Super-admin"), deleteOwnerById);
 
 router.route("/").get(protect, auth("Super-admin"), getAllUsers);
+
+router.post("/login", validate(validateLogin), login);
+
+router.patch(
+  "/profile",
+  protect,
+  validate(validateUpdateProfileAPI),
+  updateProfile
+);
 
 // Export router
 export default router;

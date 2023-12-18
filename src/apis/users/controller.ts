@@ -3,6 +3,8 @@ import AppError from "../../utils/app_error";
 import Users from "./dal";
 import generate_password from "../../utils/generate_password";
 import configs from "../../configs";
+import generate_token from "../../utils/generate_token";
+import IUsersDoc from "./dto";
 
 // Create user doc
 export const createOwner: RequestHandler = async (req, res, next) => {
@@ -69,7 +71,7 @@ export const deleteAllOwners: RequestHandler = async (req, res, next) => {
       return next(new AppError("Please provide a valid delete key", 400));
     }
 
-    await Users.deleteAll();
+    await Users.deleteAllOwners();
 
     // Response
     res.status(200).json({
@@ -108,6 +110,58 @@ export const getAllUsers: RequestHandler = async (req, res, next) => {
       status: "SUCCESS",
       results: users.length,
       data: { users },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Login for users
+export const login: RequestHandler = async (req, res, next) => {
+  try {
+    // Incoming data
+    const data = <UserRequests.ILogin>req.value;
+
+    // Find user by phone number
+    const user = await Users.getByPhoneNum(data.phone_num);
+
+    // Check user exists and has provided valid credential
+    if (!user || !user.comparePassword(data.password, user.password)) {
+      return next(new AppError("Invalid credential", 400));
+    }
+
+    // Generate token
+    const token = generate_token({ id: user.id, role: user.role });
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      message: "Logged in successfully",
+      data: { user },
+      token,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Update profile
+export const updateProfile: RequestHandler = async (req, res, next) => {
+  try {
+    const loggedInUser = <IUsersDoc>req.user; // Logged in user
+
+    // Incoming data
+    const data = <UserRequests.IUpdateProfile>req.value;
+
+    // Update user
+    const user = await Users.updateProfile(loggedInUser.id, data);
+    if (!user) return next(new AppError("User does not exist", 404));
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      message: "Profile updated successfully",
+      data: { user },
     });
   } catch (error) {
     next(error);

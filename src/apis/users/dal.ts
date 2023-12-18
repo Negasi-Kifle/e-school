@@ -61,9 +61,9 @@ export default class UserDAL {
   }
 
   // Delete all user in DB
-  static async deleteAll() {
+  static async deleteAllOwners() {
     try {
-      await User.deleteMany();
+      await User.deleteMany({ role: "Owner" });
     } catch (error) {
       throw error;
     }
@@ -74,6 +74,29 @@ export default class UserDAL {
     try {
       const deletedUser = await User.findByIdAndDelete(id);
       return deletedUser;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Get user by phone number
+  static async getByPhoneNum(phone_num: string): Promise<IUsersDoc | null> {
+    try {
+      const user = await User.findOne({ phone_num });
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Update profile
+  static async updateProfile(
+    id: string,
+    data: UserRequests.IUpdateProfile
+  ): Promise<IUsersDoc | null> {
+    try {
+      const user = await User.findByIdAndUpdate(id, data);
+      return user;
     } catch (error) {
       throw error;
     }
