@@ -120,4 +120,23 @@ export default class UserDAL {
       throw error;
     }
   }
+
+  // Delete users in tenant
+  static async deleteTenantUsers(tenant_id: string) {
+    try {
+      await User.deleteMany({ tenant_id });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Get all users of a tenant
+  static async getTenantUsers(tenant_id: string): Promise<IUsersDoc[]> {
+    try {
+      const tenantUsers = await User.find({ tenant_id });
+      return tenantUsers;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

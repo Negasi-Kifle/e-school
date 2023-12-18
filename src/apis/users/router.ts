@@ -16,6 +16,7 @@ import {
   createUser,
   deleteAllOwners,
   deleteOwnerById,
+  deleteTenantUsers,
   getAllOwners,
   getAllUsers,
   getOwnerById,
@@ -70,6 +71,12 @@ router
     auth("Super-admin", "Owner"),
     validate(validateCreateUserAPI),
     createUser
+  )
+  .delete(
+    protect,
+    auth("Owner"),
+    validate(validateDeleteAll),
+    deleteTenantUsers
   );
 
 // Export router

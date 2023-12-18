@@ -239,3 +239,62 @@ export const createUser: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
+
+// Delete users in tenant
+export const deleteTenantUsers: RequestHandler = async (req, res, next) => {
+  try {
+    // Check delete key
+    const { delete_key } = <UserRequests.IDeleteAll>req.value;
+    if (delete_key !== configs.delete_key)
+      return next(new AppError("Please provide a valid delete key", 400));
+
+    // If it is an owner trying to delete all users of the tenant, check he/she owns the school
+    const loggedInUser = <IUsersDoc>req.user;
+    const tenantId = req.params.tenantId; // Tenant id from req.params
+
+    if (
+      loggedInUser.role === "Owner" &&
+      (!loggedInUser.tenant_id || loggedInUser.tenant_id !== tenantId)
+    ) {
+      return next(new AppError("You don't own the school", 400));
+    }
+
+    // Delete tenant users
+    await Users.deleteTenantUsers(req.params.tenantId);
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      message: "All users in the selected tenant deleted permanently",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Get all users of a tenant
+export const getTenantUsers: RequestHandler = async (req, res, next) => {
+  try {
+    // If it is an owner trying to delete all users of the tenant, check he/she owns the school
+    const loggedInUser = <IUsersDoc>req.user;
+    const tenantId = req.params.tenantId; // Tenant id from req.params
+
+    if (
+      loggedInUser.role === "Owner" &&
+      (!loggedInUser.tenant_id || loggedInUser.tenant_id !== tenantId)
+    ) {
+      return next(new AppError("You don't own the school", 400));
+    }
+
+    const tenantUsers = await Users.getTenantUsers(req.params.tenantId);
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      results: tenantUsers.length,
+      data: { tenantUsers },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
