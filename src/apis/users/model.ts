@@ -63,6 +63,14 @@ userSchema.pre(/^find/, function (this: IUsersDoc, next) {
   next();
 });
 
+// Check password
+userSchema.methods.comparePassword = function (
+  candidatePassword: string,
+  password: string
+): boolean {
+  return bcrypt.compareSync(candidatePassword, password);
+};
+
 // Users model
 const User = mongoose.model<IUsersDoc>("User", userSchema);
 

@@ -90,8 +90,15 @@ export default async (req: Request, res: Response, next: NextFunction) => {
           )
         );
       }
-      // Check if credential is changed
+
+      // If user is trying to change password, skip other validations
+      if (req.url === "/changepswd") {
+        req.user = user;
+        return next();
+      }
+
       if (user.is_credential_changed) {
+        // Check if credential is changed
         return next(
           new AppError(
             "You have changed your credential recently. Please login again",
