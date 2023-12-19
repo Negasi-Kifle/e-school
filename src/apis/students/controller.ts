@@ -94,3 +94,32 @@ export const getAllStudentsInDB: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
+
+// Get student in tenant
+export const getStudentInTenant: RequestHandler = async (req, res, next) => {
+  try {
+    // Check school exists
+    const school = await School.getSchool(req.params.tenantId);
+    if (!school) return next(new AppError("School does not exist", 404));
+
+    // Logged in user
+    const loggedInUser = <IUsersDoc>req.user;
+    // Check ownership
+    checkOwnership(loggedInUser, school);
+
+    // Find student
+    const student = await Student.getStudentInTenant(
+      req.params.studId,
+      school.id
+    );
+    if (!student) return next(new AppError("Student not found", 404));
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      data: { student },
+    });
+  } catch (error) {
+    next(error);
+  }
+};

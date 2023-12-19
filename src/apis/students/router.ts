@@ -7,6 +7,7 @@ import { validateCreateAPI } from "./validation";
 import {
   createStudent,
   getAllStudentsInDB,
+  getStudentInTenant,
   getStudentsInTenant,
 } from "./controller";
 
@@ -19,9 +20,21 @@ router
     validate(validateCreateAPI),
     createStudent
   )
-  .get(protect, auth("Owner", "Director", "Teacher"), getStudentsInTenant);
+  .get(
+    protect,
+    auth("Super-admin", "Owner", "Director", "Teacher"),
+    getStudentsInTenant
+  );
 
 router.route("/").get(protect, auth("Super-admin"), getAllStudentsInDB);
+
+router
+  .route("/tenant/:tenantId/student/:studId")
+  .get(
+    protect,
+    auth("Super-admin", "Owner", "Director", "Teacher"),
+    getStudentInTenant
+  );
 
 // Export
 export default router;

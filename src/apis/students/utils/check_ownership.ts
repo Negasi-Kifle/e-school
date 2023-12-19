@@ -8,9 +8,11 @@ import IUsersDoc from "../../users/dto";
  * @param tenantId document id of the school/tenant
  */
 export default function (loggedInUser: IUsersDoc, tenant: ISchoolDoc) {
+  const rolesInTenant = ["Director", "Teacher", "Assitant"]; // Roles in tenant
+
   // Non-owner user
   if (
-    loggedInUser.role !== "Owner" &&
+    rolesInTenant.includes(loggedInUser.role) &&
     loggedInUser.tenant_id !== tenant.owner
   ) {
     throw new AppError("You don't belong to this school", 400);

@@ -54,4 +54,20 @@ export default class StudentDAL {
       throw error;
     }
   }
+
+  // Get student in tenant
+  static async getStudentInTenant(
+    studId: string,
+    tenantId: string
+  ): Promise<IStudentDoc | null> {
+    try {
+      const student = await Student.findOne({
+        _id: studId,
+        tenant_id: tenantId,
+      });
+      return student;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
