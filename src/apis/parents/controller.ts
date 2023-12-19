@@ -8,32 +8,32 @@ import configs from "../../configs";
 import generate_password from "../../utils/generate_password";
 import cloudinary from "../../utils/cloudinary";
 
-export const createParent: RequestHandler = async (
-  req,
-  res,
-  next
-) => {
+export const createParent: RequestHandler = async (req, res, next) => {
   try {
     // Get body
-    const input = <
-      ParentRequest.ICreateParentInput
-    >req.value;
+    const input = <ParentRequest.ICreateParentInput>req.value;
 
     // Make sure to include first_account if there are no parents in the DB
     const parent = await Parent.getParentByPhoneNumber(input.phone_number);
-   
-    if (parent)
-    return next(new AppError("There is a Parent with the specified Phone number", 404));
 
-    if(!req.file){
+    if (parent)
+      return next(
+        new AppError("There is a Parent with the specified Phone number", 404)
+      );
+
+    if (!req.file) {
       return next(new AppError("Please upload an image.", 400));
     }
 
-    if(req.file){
-      await cloudinary.v2.uploader.upload(req.file!.path).then((response: any)=>{
-        input.profile_img.secure_url = response.secure_url;
-        input.profile_img.public_id = response.public_id;
+    if (req.file) {
+      const response = await cloudinary.v2.uploader.upload(req.file.path, {
+        folder: "E_School/parents",
       });
+      input.profile_img = {
+        secure_url: response.secure_url,
+        public_id: response.public_id,
+      };
+      console.log(input.profile_img);
     }
 
     // Default password
@@ -57,7 +57,6 @@ export const createParent: RequestHandler = async (
   }
 };
 
-
 // Parent login
 export const parentLogin: RequestHandler = async (req, res, next) => {
   try {
@@ -67,9 +66,7 @@ export const parentLogin: RequestHandler = async (req, res, next) => {
     // Check if there is an parent
     const parent = await Parent.getParentByPhoneNumber(phone_number);
     if (!parent || !parent.comparePassword(password, parent.password))
-      return next(
-        new AppError("Invalid phone number or password", 401)
-      );
+      return next(new AppError("Invalid phone number or password", 401));
 
     // Update phone number changed at to false if it is true
     if (parent.phone_number_changed_at) {
@@ -116,7 +113,9 @@ export const getParent: RequestHandler = async (req, res, next) => {
   try {
     const parent = await Parent.getParent(req.params.id);
     if (!parent)
-      return next(new AppError("There is no Parent with the specified ID", 404));
+      return next(
+        new AppError("There is no Parent with the specified ID", 404)
+      );
 
     // Respond
     res.status(200).json({
@@ -144,10 +143,7 @@ export const updateDefaultPassword: RequestHandler = async (req, res, next) => {
       return next(new AppError("Incorrect default password", 401));
 
     // Update password
-    const parent = await Parent.updateDefaultPassword(
-      getParent,
-      password,
-    );
+    const parent = await Parent.updateDefaultPassword(getParent, password);
 
     // Respond
     res.status(200).json({
@@ -194,16 +190,10 @@ export const updateParentProfile: RequestHandler = async (req, res, next) => {
 };
 
 // Update phone or email
-export const updatePhoneNumber: RequestHandler = async (
-  req,
-  res,
-  next
-) => {
+export const updatePhoneNumber: RequestHandler = async (req, res, next) => {
   try {
     // Get body
-    const { phone_number, email } = <ParentRequest.IUpdatePhoneNumber>(
-      req.value
-    );
+    const { phone_number, email } = <ParentRequest.IUpdatePhoneNumber>req.value;
 
     // user
     const user = <IParentDoc>req.user;
@@ -221,7 +211,7 @@ export const updatePhoneNumber: RequestHandler = async (
     const parent = await Parent.updatePhoneNumber(
       user.id,
       phone_number_changed_at,
-      phone_number,
+      phone_number
     );
 
     // Respond
@@ -253,10 +243,7 @@ export const updateParentPassword: RequestHandler = async (req, res, next) => {
       return next(new AppError("Invalid current password.", 401));
 
     // Update
-    const parent = await Parent.updateParentPassword(
-      user,
-      password,
-    );
+    const parent = await Parent.updateParentPassword(user, password);
 
     // Respond
     res.status(200).json({
@@ -281,7 +268,9 @@ export const resetParentPassword: RequestHandler = async (req, res, next) => {
     // check if the parents exists
     const getParent = await Parent.getParent(id);
     if (!getParent)
-      return next(new AppError("There is no Parent with the specified ID", 404));
+      return next(
+        new AppError("There is no Parent with the specified ID", 404)
+      );
 
     // Check if the parent id and the parent resetting id are similar
     const user = <IParentDoc>req.user;
@@ -292,7 +281,10 @@ export const resetParentPassword: RequestHandler = async (req, res, next) => {
     const default_password = generate_password();
 
     // Reset
-    const parent = await Parent.resetParentPassword(getParent, default_password);
+    const parent = await Parent.resetParentPassword(
+      getParent,
+      default_password
+    );
 
     // Respond
     res.status(200).json({
@@ -316,12 +308,16 @@ export const updateParentAccountStatus: RequestHandler = async (
 ) => {
   try {
     // Get body
-    const { id, account_status } = <ParentRequest.IUpdateAccountStatus>req.value;
+    const { id, account_status } = <ParentRequest.IUpdateAccountStatus>(
+      req.value
+    );
 
     // check if the parents exists
     const getParent = await Parent.getParent(id);
     if (!getParent)
-      return next(new AppError("There is no Parent with the specified ID", 404));
+      return next(
+        new AppError("There is no Parent with the specified ID", 404)
+      );
 
     // Message
     let message: string = `Unknown status`;
@@ -339,7 +335,6 @@ export const updateParentAccountStatus: RequestHandler = async (
       return next(
         new AppError("You can not change the status of your own account", 401)
       );
-
 
     // Update
     const parent = await Parent.updateParentAccountStatus(
@@ -363,11 +358,11 @@ export const updateParentAccountStatus: RequestHandler = async (
 // Delete an parent permanently
 export const deleteParent: RequestHandler = async (req, res, next) => {
   try {
-
     const parent = await Parent.deleteParent(req.params.id);
     if (!parent)
-      return next(new AppError("There is no parent with the specified ID", 404));
-
+      return next(
+        new AppError("There is no parent with the specified ID", 404)
+      );
 
     // Respond
     res.status(200).json({

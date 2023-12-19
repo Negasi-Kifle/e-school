@@ -3,7 +3,6 @@ import IParentDoc from "./dto";
 import APIFeatures from "../../utils/api_features";
 
 export default class Parent {
-
   // Create an parent
   static async createParent(
     data: ParentRequest.ICreateParentInput
@@ -15,6 +14,7 @@ export default class Parent {
         address: data.address,
         phone_number: data.phone_number,
         password: data.password,
+        profile_img: data.profile_img,
       });
 
       return newParent;
@@ -59,7 +59,7 @@ export default class Parent {
   // Update default password
   static async updateDefaultPassword(
     parent: IParentDoc,
-    password: string,
+    password: string
   ): Promise<IParentDoc> {
     try {
       parent.password = password;
@@ -126,8 +126,7 @@ export default class Parent {
     try {
       const parent = await ParentModel.findByIdAndUpdate(
         id,
-        { phone_number_changed_at
-          : false },
+        { phone_number_changed_at: false },
         { runValidators: true, new: true }
       );
       return parent;
@@ -139,7 +138,7 @@ export default class Parent {
   // Update parent password
   static async updateParentPassword(
     parent: IParentDoc,
-    password: string,
+    password: string
   ): Promise<IParentDoc | null> {
     try {
       parent.password = password;

@@ -31,14 +31,8 @@ const studentsSchema = new Schema({
     required: [true, "Please select school"],
   },
   prof_img: {
-    secure_url: {
-      type: String,
-      required: [true, "Secure url of profile image is required"],
-    },
-    public_id: {
-      type: String,
-      required: [true, "Public id of profile image is required"],
-    },
+    secure_url: String,
+    public_id: String,
   },
 });
 

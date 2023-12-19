@@ -33,6 +33,7 @@ declare global {
       parent: string;
       parent_relation: string;
       tenant_id: string;
+      prof_img: IProfileImg;
     }
   }
 }

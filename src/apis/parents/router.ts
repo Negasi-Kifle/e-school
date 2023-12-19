@@ -42,13 +42,7 @@ router.patch(
   updateDefaultPassword
 );
 
-
-router.patch(
-  "/profile",
-  protect,
-  auth("Parent"),
-  updateParentProfile
-);
+router.patch("/profile", protect, auth("Parent"), updateParentProfile);
 
 router.patch(
   "/phonenumber",
@@ -74,7 +68,6 @@ router.patch(
   resetParentPassword
 );
 
-
 router.patch(
   "/accountstatus",
   protect,
@@ -88,11 +81,15 @@ router
   .post(
     protect,
     auth("Super-admin"),
-    upload.single('picture'),
+    upload.single("picture"),
     validator(createParentValidation),
     createParent
   )
-  .get(protect, auth("Super-admin"), getAllParents)
+  .get(
+    protect,
+    auth("Super-admin", "Owner", "Teacher", "Director", "Admin"),
+    getAllParents
+  )
   .delete(
     protect,
     auth("Super-admin"),
