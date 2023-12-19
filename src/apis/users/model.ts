@@ -1,27 +1,18 @@
 import mongoose, { Schema } from "mongoose";
 import IUsersDoc from "./dto";
-import validator from "validator";
+import bcrypt from "bcryptjs";
 
 // Users schema
 const userSchema = new Schema(
   {
-    first_name: {
-      type: String,
-      required: [true, "First name is required"],
-    },
-    last_name: {
-      type: String,
-      required: [true, "Last name is reqiured"],
-    },
+    first_name: { type: String, required: [true, "First name is required"] },
+    last_name: { type: String, required: [true, "Last name is reqiured"] },
     phone_num: {
       type: String,
       required: [true, "Phone number is required"],
       unique: true,
     },
-    role: {
-      type: String,
-      required: [true, "Role is required"],
-    },
+    role: { type: String, required: [true, "Role is required"] },
     status: {
       type: String,
       default: "Active",
@@ -30,29 +21,17 @@ const userSchema = new Schema(
         message: "Invalid status selected",
       },
     },
-    password: {
-      type: String,
-      required: [true, "Password is required"],
-    },
-    is_default_pswd: {
-      type: Boolean,
-      default: true,
-    },
-    is_credential_changed: {
-      type: Boolean,
-      default: false,
-    },
-    tenantId: String,
-    address: {
-      type: String,
-      required: [true, "Address is requried"],
-    },
+    password: { type: String, required: [true, "Password is required"] },
+    is_default_pswd: { type: Boolean, default: true },
+    is_credential_changed: { type: Boolean, default: false },
+    tenant_id: { type: Schema.ObjectId, ref: "School" },
+    address: { type: String, required: [true, "Address is requried"] },
     prof_img: {
       secure_url: {
         type: String,
         required: [true, "Secure Url of profile picture is required"],
       },
-      pubic_id: {
+      public_id: {
         type: String,
         required: [true, "Public Id of profile picture is required"],
       },
@@ -67,6 +46,30 @@ const userSchema = new Schema(
     toObject: { virtuals: true },
   }
 );
+
+// Hash password if its changed or new data is being created
+userSchema.pre("save", function (this: IUsersDoc, next) {
+  if (!this.isModified("password")) return next();
+  this.password = bcrypt.hashSync(this.password, 12);
+  next();
+});
+
+// Populate school info in find method
+userSchema.pre(/^find/, function (this: IUsersDoc, next) {
+  this.populate({
+    path: "tenant_id",
+    select: "school_name school_address level status",
+  });
+  next();
+});
+
+// Check password
+userSchema.methods.comparePassword = function (
+  candidatePassword: string,
+  password: string
+): boolean {
+  return bcrypt.compareSync(candidatePassword, password);
+};
 
 // Users model
 const User = mongoose.model<IUsersDoc>("User", userSchema);

@@ -77,7 +77,7 @@ export const parentLogin: RequestHandler = async (req, res, next) => {
     }
 
     // Generate token
-    const token = generateToken({ id: parent._id, user: "parent" });
+    const token = generateToken({ id: parent._id, role: "parent" });
 
     // Respond
     res.status(200).json({

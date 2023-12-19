@@ -49,6 +49,16 @@ export default (
     }
   }
 
+  // Token Error
+  if (err.name === "JsonWebTokenError") {
+    err = new AppError("Please login", 400);
+  }
+
+  // Token Expired
+  if (err.name === "TokenExpiredError") {
+    err = new AppError("Please login", 400);
+  }
+
   if (configs.env === "development" || configs.env === "local") {
     // Send error for different scenarios
     sendDevError(err, res);

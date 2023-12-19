@@ -50,7 +50,7 @@ router.patch(
 router.get(
   "/owner/:id",
   protect,
-  auth("Super-admin", "Admin", "Call-center"),
+  auth("Super-admin", "Admin", "Call-center", "Owner"),
   getSchoolByOwner
 );
 
