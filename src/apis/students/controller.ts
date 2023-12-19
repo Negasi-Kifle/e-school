@@ -4,6 +4,7 @@ import School from "../schools/dal";
 import IUsersDoc from "../users/dto";
 import Student from "./dal";
 import { RequestHandler } from "express";
+import checkOwnership from "./utils/check_ownership";
 
 // Create student
 export const createStudent: RequestHandler = async (req, res, next) => {
@@ -44,6 +45,50 @@ export const createStudent: RequestHandler = async (req, res, next) => {
       status: "SUCCESS",
       message: "New student created successfully",
       data: { student },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Get all students in tenant
+export const getStudentsInTenant: RequestHandler = async (req, res, next) => {
+  try {
+    // Check school exists
+    const school = await School.getSchool(req.params.tenantId);
+    if (!school) return next(new AppError("School does not exist", 404));
+
+    // Check logged in user blongs/owns the school
+    const loggedInUser = <IUsersDoc>req.user;
+    checkOwnership(loggedInUser, school);
+
+    // Get all students in tenant
+    const students = await Student.getStudentsInTenant(
+      req.params.tenantId,
+      req.query
+    );
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      results: students.length,
+      data: { students },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Get all students in DB
+export const getAllStudentsInDB: RequestHandler = async (req, res, next) => {
+  try {
+    const students = await Student.getAllStudentsInDB(req.query);
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      results: students.length,
+      data: { students },
     });
   } catch (error) {
     next(error);

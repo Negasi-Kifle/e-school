@@ -1,3 +1,4 @@
+import APIFeatures from "../../utils/api_features";
 import IStudentDoc from "./dto";
 import Student from "./model";
 
@@ -12,6 +13,43 @@ export default class StudentDAL {
     try {
       const student = await Student.create(data);
       return student;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Get all students in a tenant
+  static async getStudentsInTenant(
+    tenant_id: string,
+    query?: RequestQuery
+  ): Promise<IStudentDoc[]> {
+    try {
+      const apiFeatures = new APIFeatures(Student.find({ tenant_id }), query)
+        .project()
+        .filter()
+        .sort()
+        .paginate();
+
+      const students = await apiFeatures.dbQuery;
+      return students;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Get all students in DB
+  static async getAllStudentsInDB(
+    query?: RequestQuery
+  ): Promise<IStudentDoc[]> {
+    try {
+      const apiFeatures = new APIFeatures(Student.find(), query)
+        .paginate()
+        .project()
+        .filter()
+        .sort();
+
+      const students = await apiFeatures.dbQuery;
+      return students;
     } catch (error) {
       throw error;
     }
