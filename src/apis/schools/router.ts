@@ -54,6 +54,9 @@ router.get(
   getSchoolByOwner
 );
 
+
+
+
 router
   .route("/:id")
   .get(protect, auth("Super-admin", "Admin", "Call-center"), getSchoolById)

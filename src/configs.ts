@@ -13,4 +13,9 @@ export default {
   },
   delete_key: process.env.DELETE_KEY,
   api_key: process.env.API_KEY,
+  cloudinary: {
+    cloud_name:<string>process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: <string>process.env.CLOUDINARY_API_KEY,
+    api_secret: <string>process.env.CLOUDINARY_API_SECRET
+  },
 };

@@ -153,6 +153,20 @@ export const getSchoolByOwner: RequestHandler = async (req, res, next) => {
   }
 };
 
+export const getStudentsBySchoolId: RequestHandler = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const school = await School.getSchoolByOwner(id);
+
+    res.status(200).json({
+      status: "SUCCESS",
+      data: { school },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 // Delete all schools except for the first account
 export const deleteAllSchools: RequestHandler = async (req, res, next) => {
   try {
