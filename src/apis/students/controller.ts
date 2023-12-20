@@ -123,3 +123,32 @@ export const getStudentInTenant: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
+
+// Update student data
+export const updateStudent: RequestHandler = async (req, res, next) => {
+  try {
+    // Check school exists
+    const school = await School.getSchool(req.params.tenantId);
+    if (!school) return next(new AppError("School doesn't exist", 404));
+
+    // Check the logged in user owns/belongs to the school
+    const loggedInUser = <IUsersDoc>req.user;
+    checkOwnership(loggedInUser, school);
+
+    // Incoming data
+    const data = <StudentRequests.IUpdateStudent>req.value;
+
+    // Update student info
+    const student = await Student.updateStudent(req.params.studId, data);
+    if (!student) return next(new AppError("Student doesn't exist", 404));
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      message: "Student info updated successfully",
+      data: { student },
+    });
+  } catch (error) {
+    next(error);
+  }
+};

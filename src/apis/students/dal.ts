@@ -70,4 +70,20 @@ export default class StudentDAL {
       throw error;
     }
   }
+
+  // Update student info
+  static async updateStudent(
+    id: string,
+    data: StudentRequests.IUpdateStudent
+  ): Promise<IStudentDoc | null> {
+    try {
+      const student = await Student.findByIdAndUpdate(id, data, {
+        runValidators: true,
+        new: true,
+      });
+      return student;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

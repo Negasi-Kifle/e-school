@@ -12,6 +12,8 @@ export default interface IStudentDoc extends Document {
   parent_relation: string;
   tenant_id: string;
   prof_img: IProfileImg;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // Keys in a profile image
@@ -24,6 +26,18 @@ export interface IProfileImg {
 declare global {
   namespace StudentRequests {
     interface ICreateStudent {
+      first_name: string;
+      last_name: string;
+      level: "KG" | "Elementary" | "High School" | "Preparatory";
+      grade: string;
+      birth_date: Date;
+      sex: "Male" | "Female";
+      parent: string;
+      parent_relation: string;
+      tenant_id: string;
+      prof_img: IProfileImg;
+    }
+    interface IUpdateStudent {
       first_name: string;
       last_name: string;
       level: "KG" | "Elementary" | "High School" | "Preparatory";
