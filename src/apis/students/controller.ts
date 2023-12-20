@@ -5,6 +5,7 @@ import IUsersDoc from "../users/dto";
 import Student from "./dal";
 import { RequestHandler } from "express";
 import checkOwnership from "./utils/check_ownership";
+import configs from "../../configs";
 
 // Create student
 export const createStudent: RequestHandler = async (req, res, next) => {
@@ -147,6 +148,69 @@ export const updateStudent: RequestHandler = async (req, res, next) => {
       status: "SUCCESS",
       message: "Student info updated successfully",
       data: { student },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Delete student in a tenant
+export const deleteStudInTenant: RequestHandler = async (req, res, next) => {
+  try {
+    // Check delete key
+    const { delete_key } = <StudentRequests.IDeleteKey>req.value;
+    if (delete_key !== configs.delete_key)
+      return next(new AppError("Please provide a valid delete key", 400));
+
+    // Check school exists
+    const school = await School.getSchool(req.params.tenantId);
+    if (!school) return next(new AppError("School does not exist", 404));
+
+    // Check the logged in user owns/belongs to the school
+    const loggedInUser = <IUsersDoc>req.user;
+    checkOwnership(loggedInUser, school);
+
+    // Delete student
+    const student = await Student.deleteStudent(req.params.studId);
+    if (!student) return next(new AppError("Student does not exist", 404));
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      message: "Student deleted successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Delete all students in tenant
+export const deleteAllStudentsInTenant: RequestHandler = async (
+  req,
+  res,
+  next
+) => {
+  try {
+    // Check delete key
+    const { delete_key } = <StudentRequests.IDeleteKey>req.value;
+    if (delete_key !== configs.delete_key)
+      return next(new AppError("Please provide a valid delete key", 400));
+
+    // Check school exists
+    const school = await School.getSchool(req.params.tenantId);
+    if (!school) return next(new AppError("School does not exist", 404));
+
+    // Check the logged in user owns/belongs to the school
+    const loggedInUser = <IUsersDoc>req.user;
+    checkOwnership(loggedInUser, school);
+
+    // Delete students in the tenant
+    await Student.deleteAllStudentsInTenant(school.id);
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      message: `All students in ${school.school_name} deleted permanently`,
     });
   } catch (error) {
     next(error);

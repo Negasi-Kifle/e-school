@@ -92,3 +92,11 @@ export const validateUpdateAPI = Joi.object({
     }),
   }),
 });
+
+// Validate the API that's for deleting all studnets in DB
+export const validateDeleteAllAPI = Joi.object({
+  delete_key: Joi.string().required().messages({
+    "any.required": "Please provide a valid delete key",
+    "string.empty": "Please provide a valid delete key",
+  }),
+});
