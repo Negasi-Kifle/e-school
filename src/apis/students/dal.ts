@@ -86,4 +86,23 @@ export default class StudentDAL {
       throw error;
     }
   }
+
+  // Delete a student
+  static async deleteStudent(studId: string): Promise<any> {
+    try {
+      const student = await Student.findByIdAndDelete(studId);
+      return student;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Delete all students in tenant
+  static async deleteAllStudentsInTenant(tenant_id: string) {
+    try {
+      await Student.deleteMany({ tenant_id });
+    } catch (error) {
+      throw error;
+    }
+  }
 }

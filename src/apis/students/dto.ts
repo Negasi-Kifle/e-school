@@ -49,5 +49,8 @@ declare global {
       tenant_id: string;
       prof_img: IProfileImg;
     }
+    interface IDeleteKey {
+      delete_key: string;
+    }
   }
 }

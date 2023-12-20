@@ -3,9 +3,15 @@ const router = Router();
 import protect from "../../utils/protect";
 import auth from "../../utils/auth";
 import validate from "../../utils/validator";
-import { validateCreateAPI, validateUpdateAPI } from "./validation";
+import {
+  validateCreateAPI,
+  validateDeleteAllAPI,
+  validateUpdateAPI,
+} from "./validation";
 import {
   createStudent,
+  deleteAllStudentsInTenant,
+  deleteStudInTenant,
   getAllStudentsInDB,
   getStudentInTenant,
   getStudentsInTenant,
@@ -25,6 +31,12 @@ router
     protect,
     auth("Super-admin", "Owner", "Director", "Teacher"),
     getStudentsInTenant
+  )
+  .delete(
+    protect,
+    auth("Super-admin"),
+    validate(validateDeleteAllAPI),
+    deleteAllStudentsInTenant
   );
 
 router.route("/").get(protect, auth("Super-admin"), getAllStudentsInDB);
@@ -41,6 +53,12 @@ router
     auth("Owner", "Director", "Teacher"),
     validate(validateUpdateAPI),
     updateStudent
+  )
+  .delete(
+    protect,
+    auth("Owner", "Director", "Teacher"),
+    validate(validateDeleteAllAPI),
+    deleteStudInTenant
   );
 
 // Export
