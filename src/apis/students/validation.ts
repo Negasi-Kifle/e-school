@@ -52,3 +52,43 @@ export const validateCreateAPI = Joi.object({
     }),
   }),
 });
+
+// Validate the API that's used to create student data
+export const validateUpdateAPI = Joi.object({
+  first_name: Joi.string().messages({
+    "string.empty": "First name can not be empty",
+  }),
+  last_name: Joi.string().messages({
+    "string.empty": "Last name can not be empty",
+  }),
+  level: Joi.string()
+    .valid("KG", "Elementary", "High School", "Preparatory")
+    .messages({
+      "string.empty": "Level can not be empty",
+      "any.only": "Level must one of: KG, Elementary, High School, Preparatory",
+    }),
+  grade: Joi.string().messages({
+    "string.empty": "What grade is the student in?",
+  }),
+  sex: Joi.string().valid("Male", "Female").messages({
+    "string.empty": "Sex of a student can not be empty",
+    "any.only": "Sex must either Male or Female",
+  }),
+  parent: Joi.string().messages({
+    "string.empty": "Student parent can not be empty",
+  }),
+  parent_relation: Joi.string().messages({
+    "string.empty": "Relation b/n a student and parent can not be empty",
+  }),
+  tenant_id: Joi.string().messages({
+    "string.empty": "School can not be empty",
+  }),
+  prof_img: Joi.object({
+    secure_url: Joi.string().messages({
+      "string.empty": "Secure url of profile image can not be empty",
+    }),
+    public_id: Joi.string().messages({
+      "string.empty": "Public id of profile image can not be empty",
+    }),
+  }),
+});

@@ -13,6 +13,8 @@ export default interface IUsersDoc extends Document {
   tenant_id: string;
   address: string;
   prof_img: IProfileImg;
+  createdAt: Date;
+  updatedAt: Date;
   comparePassword: (incomingPswd: string, pswdInDB: string) => boolean;
 }
 
