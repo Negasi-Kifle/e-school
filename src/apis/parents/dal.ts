@@ -1,6 +1,8 @@
 import ParentModel from "./model";
 import IParentDoc from "./dto";
 import APIFeatures from "../../utils/api_features";
+import IStudentDoc from "../students/dto";
+import Student from "../students/model";
 
 export default class Parent {
   // Create an parent
@@ -198,6 +200,16 @@ export default class Parent {
   static async deleteAllParents() {
     try {
       await ParentModel.deleteMany({});
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Get students by parent
+  static async getStudentsOfParent(parent: string): Promise<IStudentDoc[]> {
+    try {
+      const students = await Student.find({ parent });
+      return students;
     } catch (error) {
       throw error;
     }
