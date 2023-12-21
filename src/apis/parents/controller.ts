@@ -8,6 +8,7 @@ import configs from "../../configs";
 import generate_password from "../../utils/generate_password";
 import cloudinary from "../../utils/cloudinary";
 
+// Create parent
 export const createParent: RequestHandler = async (req, res, next) => {
   try {
     // Get body
@@ -389,6 +390,23 @@ export const deleteAllParents: RequestHandler = async (req, res, next) => {
       status: "SUCCESS",
       message:
         "All parent accounts are deleted except for the first account created on the system",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Get students/children of a parent
+export const getParentChildren: RequestHandler = async (req, res, next) => {
+  try {
+    // Get children of a parent
+    const children = await Parent.getStudentsOfParent(req.params.parentId);
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      results: children.length,
+      data: { children },
     });
   } catch (error) {
     next(error);

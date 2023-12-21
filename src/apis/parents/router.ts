@@ -15,6 +15,7 @@ import {
   deleteParent,
   deleteAllParents,
   getAllParents,
+  getParentChildren,
 } from "./controller";
 import {
   parentLoginValidation,
@@ -101,5 +102,12 @@ router
   .route("/:id")
   .get(protect, auth("Super-admin", "Parent", "Call-center"), getParent)
   .delete(protect, auth("Super-admin"), deleteParent);
+
+router.get(
+  "/children/:parentId",
+  protect,
+  auth("Super-admin", "Parent", "Call-center", "Owner", "Teacher", "Director"),
+  getParentChildren
+);
 
 export default router;
