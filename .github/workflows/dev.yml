@@ -24,6 +24,8 @@ jobs:
           if [ $? -ne 0 ]; then
             echo "Build failed!"
             exit 1
+          else
+           echo "Build succeeded!"
           fi
 
   deploy:
@@ -56,6 +58,8 @@ jobs:
           if [ $? -ne 0 ]; then
             echo "Build failed!"
             exit 1
+          else
+           echo "Build succeeded!"
           fi
 
   cleanup:
