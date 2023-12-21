@@ -12,15 +12,19 @@ jobs:
     runs-on: trust-server
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Build E-School DEV API Docker image
         if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
         run: |
           retries=3
-          until [ $retries -le 0 ] || docker build -t trust_website_dev_api_image .; do
+          until [ $retries -le 0 ] || docker build -t e-school_dev_api_image .; do
             ((retries--))
           done
+          if [ $? -ne 0 ]; then
+            echo "Build failed!"
+            exit 1
+          fi
 
   deploy:
     needs: build
@@ -29,8 +33,8 @@ jobs:
       - name: Deploy E-School DEV API Docker container
         if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
         run: |
-          docker stop trust_website_dev_api_container || true
-          docker rm trust_website_dev_api_container || true
+          docker stop e-school_dev_api_container || true
+          docker rm e-school_dev_api_container || true
           retries=3
           until [ $retries -le 0 ] || docker run -d \
           -e API_KEY=${{secrets.DEV_API_KEY}} \
@@ -44,11 +48,15 @@ jobs:
           -e NODE_ENV=${{vars.DEV_NODE_ENV}} \
           -e PORT=${{vars.DEV_PORT}} \
           -p ${{vars.DEV_PORT}}:${{vars.DEV_PORT}} \
-          --name trust_website_dev_api_container \
+          --name e-school_dev_api_container \
           --restart unless-stopped \
-          trust_website_dev_api_image:latest; do
+          e-school_dev_api_image:latest; do
             ((retries--))
           done
+          if [ $? -ne 0 ]; then
+            echo "Build failed!"
+            exit 1
+          fi
 
   cleanup:
     needs: [build, deploy]
