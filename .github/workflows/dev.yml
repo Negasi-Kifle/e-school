@@ -17,6 +17,7 @@ jobs:
       - name: Build E-School DEV API Docker image
         if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
         run: |
+          set -e
           retries=3
           until [ $retries -le 0 ] || docker build -t e-school_dev_api_image .; do
             ((retries--))
