@@ -50,4 +50,58 @@ export default class PackageDAL {
       throw error;
     }
   }
+
+  // Get package by id
+  static async getPackageById(id: string): Promise<IPmtPackageDoc | null> {
+    try {
+      const pmtPackage = await PmtPackage.findById(id);
+      return pmtPackage;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Update package info
+  static async updatePackage(
+    id: string,
+    data: PmtPackageRequests.IUpdatePmtPackage
+  ): Promise<IPmtPackageDoc | null> {
+    try {
+      const pmtPackage = await PmtPackage.findByIdAndUpdate(id, data, {
+        runValidators: true,
+        new: true,
+      });
+      return pmtPackage;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Delete all pacakges in a tenant
+  static async deleteTenantPackages(tenant_id: string) {
+    try {
+      await PmtPackage.deleteMany({ tenant_id });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Delete all in DB
+  static async deleteAllInDB() {
+    try {
+      await PmtPackage.deleteMany();
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Delete package by id
+  static async deleteById(id: string, tenant_id: string): Promise<any> {
+    try {
+      const pmtPackage = await PmtPackage.deleteOne({ _id: id, tenant_id });
+      return pmtPackage.deletedCount;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
