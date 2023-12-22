@@ -76,4 +76,32 @@ export default class PackageDAL {
       throw error;
     }
   }
+
+  // Delete all pacakges in a tenant
+  static async deleteTenantPackages(tenant_id: string) {
+    try {
+      await PmtPackage.deleteMany({ tenant_id });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Delete all in DB
+  static async deleteAllInDB() {
+    try {
+      await PmtPackage.deleteMany();
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Delete package by id
+  static async deleteById(id: string, tenant_id: string): Promise<any> {
+    try {
+      const pmtPackage = await PmtPackage.deleteOne({ _id: id, tenant_id });
+      return pmtPackage.deletedCount;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

@@ -5,6 +5,7 @@ import slugifer from "../../utils/slugfier";
 import School from "../schools/dal";
 import IUsersDoc from "../users/dto";
 import checkOwnership from "../students/utils/check_ownership";
+import configs from "../../configs";
 
 // Create package
 export const createPack: RequestHandler = async (req, res, next) => {
@@ -131,6 +132,85 @@ export const updatePackage: RequestHandler = async (req, res, next) => {
       status: "SUCCESS",
       message: "Payment package updated successfully",
       data: { pmtPackage },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Delete all packages in tenant
+export const deleteTenantPackages: RequestHandler = async (req, res, next) => {
+  try {
+    // Check delete is correct
+    const { delete_key } = <PmtPackageRequests.IDeleteAll>req.value;
+    if (delete_key !== configs.delete_key)
+      return next(new AppError("Please provide a valid delete key", 400));
+
+    // Check school exists
+    const school = await School.getSchool(req.params.tenantId);
+    if (!school) return next(new AppError("Schoold does not exist", 404));
+
+    // Check the logged in user has the previllege to the operation
+    const loggedInUser = <IUsersDoc>req.user;
+    checkOwnership(loggedInUser, school);
+
+    // Delete all packages in tenant
+    await PackageDAL.deleteTenantPackages(school.id);
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      message: `All payment packages in ${school.school_name} deleted permanently`,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Delete all packages in DB
+export const deletePackagesInDB: RequestHandler = async (req, res, next) => {
+  try {
+    // Check delete key
+    const { delete_key } = <PmtPackageRequests.IDeleteAll>req.value;
+    if (delete_key !== configs.delete_key)
+      return next(new AppError("Please provide a valid delete key", 400));
+
+    await PackageDAL.deleteAllInDB(); // Delete all packages in DB
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      message: "All packages in DB deleted permanently",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Delete by id
+export const deleteById: RequestHandler = async (req, res, next) => {
+  try {
+    // Check school exists
+    const school = await School.getSchool(req.params.tenantId);
+    if (!school) return next(new AppError("School does not exist", 404));
+
+    // Check the logged in user has previlege to do the operation
+    const loggedInUser = <IUsersDoc>req.user;
+    checkOwnership(loggedInUser, school);
+
+    // Delete package
+    const deleteCount = await PackageDAL.deleteById(
+      req.params.packId,
+      school.id
+    );
+
+    if (deleteCount === 0)
+      return next(new AppError("Package does not exist", 404));
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      message: "Payment package deleted successfully",
     });
   } catch (error) {
     next(error);

@@ -27,5 +27,8 @@ declare global {
       num_of_months: string;
       discount: string;
     }
+    interface IDeleteAll {
+      delete_key: string;
+    }
   }
 }

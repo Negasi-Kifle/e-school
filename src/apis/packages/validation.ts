@@ -32,3 +32,11 @@ export const validateUpdateAPI = Joi.object({
     "number.max": "Discount must be less than or equal to 100",
   }),
 });
+
+// Validate the API that's for deleting all pacakges
+export const validateDeleteAllAPI = Joi.object({
+  delete_key: Joi.string().required().messages({
+    "any.required": "Please provide a valid delete key",
+    "string.empty": "Please provide a valid delete key",
+  }),
+});
