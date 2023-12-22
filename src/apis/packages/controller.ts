@@ -80,3 +80,28 @@ export const getAllPackagesInDB: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
+
+// Get package by id
+export const getPackageById: RequestHandler = async (req, res, next) => {
+  try {
+    // Check school exists
+    const school = await School.getSchool(req.params.tenantId);
+    if (!school) return next(new AppError("School does not exist", 404));
+
+    // Check the logged in user owns/belongs the school
+    const loggedInUser = <IUsersDoc>req.user;
+    checkOwnership(loggedInUser, school);
+
+    // Get package
+    const pmtPackage = await PackageDAL.getPackageById(req.params.packId);
+    if (!pmtPackage) return next(new AppError("Package does not exist", 404));
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      data: { pmtPackage },
+    });
+  } catch (error) {
+    next(error);
+  }
+};

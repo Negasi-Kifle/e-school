@@ -50,4 +50,14 @@ export default class PackageDAL {
       throw error;
     }
   }
+
+  // Get package by id
+  static async getPackageById(id: string): Promise<IPmtPackageDoc | null> {
+    try {
+      const pmtPackage = await PmtPackage.findById(id);
+      return pmtPackage;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

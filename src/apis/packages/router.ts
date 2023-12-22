@@ -7,6 +7,7 @@ import { validateCreateAPI } from "./validation";
 import {
   createPack,
   getAllPackagesInDB,
+  getPackageById,
   getTenantPackages,
 } from "./controller";
 
@@ -26,6 +27,14 @@ router
   );
 
 router.get("/", protect, auth("Super-admin"), getAllPackagesInDB);
+
+router
+  .route("/tenant/:tenantId/package/:packId")
+  .get(
+    protect,
+    auth("Super-admin", "Admin", "Owner", "Director", "Teacher"),
+    getPackageById
+  );
 
 // Export router
 export default router;
