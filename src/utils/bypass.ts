@@ -5,6 +5,7 @@ import verifyToken from "./verify_token";
 
 export default async (req: Request, res: Response, next: NextFunction) => {
   try {
+    const trustRoles = ["Super-admin", "Admin", "Call-center"];
     // Token
     let token: string = "";
 
@@ -22,10 +23,10 @@ export default async (req: Request, res: Response, next: NextFunction) => {
     // Verify token
     const decodedData = verifyToken(token);
 
-    if (decodedData.user === "admin") {
+    if (trustRoles.includes(decodedData.role)) {
       // Check if the admin exists
       const admin = await Admin.getAdmin(decodedData.id);
-      if (!admin) return next(new AppError("Admin does not exists", 400));
+      if (!admin) return next(new AppError("Admin does not exist", 404));
 
       req.user = admin;
     }

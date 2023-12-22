@@ -5,8 +5,7 @@ export const createFirstAdminValidation = Joi.object({
   last_name: Joi.string().required(),
   email: Joi.string().email().required(),
   phone_number: Joi.string().required(),
-  password: Joi.string().required(),
-  password_confirm: Joi.string().required().equal(Joi.ref('password')),
+  first_account: Joi.boolean().valid(true),
 });
 
 export const createAdminValidation = Joi.object({
@@ -25,7 +24,7 @@ export const adminLoginValidation = Joi.object({
 export const updateDefaultPasswordValidation = Joi.object({
   default_password: Joi.string().required(),
   password: Joi.string().required(),
-  password_confirm: Joi.string().required().equal(Joi.ref('password')),
+  password_confirm: Joi.string().required().equal(Joi.ref("password")),
 });
 
 export const updateEmailOrPhoneNumberValidation = Joi.object({
@@ -41,7 +40,7 @@ export const updateAdminRoleValidation = Joi.object({
 export const updateAdminPasswordValidation = Joi.object({
   current_password: Joi.string().required(),
   password: Joi.string().required(),
-  password_confirm: Joi.string().required().equal(Joi.ref('password')),
+  password_confirm: Joi.string().required().equal(Joi.ref("password")),
 });
 
 export const resetAdminPasswordValidation = Joi.object({
