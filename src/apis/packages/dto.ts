@@ -21,5 +21,11 @@ declare global {
       discount: string;
       tenant_id: string;
     }
+    interface IUpdatePmtPackage {
+      pack_name: string;
+      pack_name_slug: string;
+      num_of_months: string;
+      discount: string;
+    }
   }
 }

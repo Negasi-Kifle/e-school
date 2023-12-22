@@ -105,3 +105,34 @@ export const getPackageById: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
+
+// Update package
+export const updatePackage: RequestHandler = async (req, res, next) => {
+  try {
+    // Check school exists
+    const school = await School.getSchool(req.params.tenantId);
+    if (!school) return next(new AppError("School does not exist", 404));
+
+    // Check logged in user owns/belongs to the school
+    const loggedInUser = <IUsersDoc>req.user;
+    checkOwnership(loggedInUser, school);
+
+    // Incoming data
+    const data = <PmtPackageRequests.IUpdatePmtPackage>req.value;
+    if (data.pack_name_slug)
+      data.pack_name_slug = slugifer(data.pack_name.toLowerCase()); // Slugify name
+
+    // Update package
+    const pmtPackage = await PackageDAL.updatePackage(req.params.packId, data);
+    if (!pmtPackage) return next(new AppError("Package does not exist", 404));
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      message: "Payment package updated successfully",
+      data: { pmtPackage },
+    });
+  } catch (error) {
+    next(error);
+  }
+};

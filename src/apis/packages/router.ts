@@ -3,12 +3,13 @@ const router = Router();
 import protect from "../../utils/protect";
 import auth from "../../utils/auth";
 import validate from "../../utils/validator";
-import { validateCreateAPI } from "./validation";
+import { validateCreateAPI, validateUpdateAPI } from "./validation";
 import {
   createPack,
   getAllPackagesInDB,
   getPackageById,
   getTenantPackages,
+  updatePackage,
 } from "./controller";
 
 // Mounte routes with their respective controller methods
@@ -34,6 +35,12 @@ router
     protect,
     auth("Super-admin", "Admin", "Owner", "Director", "Teacher"),
     getPackageById
+  )
+  .patch(
+    protect,
+    auth("Owner", "Director"),
+    validate(validateUpdateAPI),
+    updatePackage
   );
 
 // Export router

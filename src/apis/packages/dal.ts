@@ -60,4 +60,20 @@ export default class PackageDAL {
       throw error;
     }
   }
+
+  // Update package info
+  static async updatePackage(
+    id: string,
+    data: PmtPackageRequests.IUpdatePmtPackage
+  ): Promise<IPmtPackageDoc | null> {
+    try {
+      const pmtPackage = await PmtPackage.findByIdAndUpdate(id, data, {
+        runValidators: true,
+        new: true,
+      });
+      return pmtPackage;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
