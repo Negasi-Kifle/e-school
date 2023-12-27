@@ -14,6 +14,7 @@ import parentsRouter from "../apis/parents/router";
 import studentRouter from "../apis/students/router";
 import pmtPackageRouter from "../apis/packages/router";
 import pcostRouter from "../apis/pcost/router";
+import pcoRouter from "../apis/pco/router";
 
 // Parse incoming requests
 app.use(express.json());
@@ -36,6 +37,7 @@ app.use("/api/v1/parent", parentsRouter);
 app.use("/api/v1/students", studentRouter);
 app.use("/api/v1/pmtpackages", pmtPackageRouter);
 app.use("/api/v1/pcost", pcostRouter);
+app.use("/api/v1/pco", pcoRouter);
 
 // Handle unknown url
 app.use("*", (req: Request, res: Response, next: NextFunction) => {
