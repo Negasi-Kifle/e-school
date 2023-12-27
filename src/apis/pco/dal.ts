@@ -22,7 +22,13 @@ export default class PCODAL {
     query?: RequestQuery
   ): Promise<IPCODoc[]> {
     try {
-      const apiFeatures = new APIFeatures(PCO.find({ tenant_id }), query)
+      const apiFeatures = new APIFeatures(
+        PCO.find({ tenant_id }).populate({
+          path: "tenant_id",
+          select: "school_name school_address level",
+        }),
+        query
+      )
         .paginate()
         .project()
         .sort()
@@ -52,6 +58,23 @@ export default class PCODAL {
 
       const allPCOs = await apiFeatures.dbQuery;
       return allPCOs;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Get PCO by id
+  static async getById(
+    _id: string,
+    tenant_id: string
+  ): Promise<IPCODoc | null> {
+    try {
+      // Check school exists
+      const school = await PCO.findOne({ _id, tenant_id }).populate({
+        path: "tenant_id",
+        select: "school_name school_address level",
+      });
+      return school;
     } catch (error) {
       throw error;
     }

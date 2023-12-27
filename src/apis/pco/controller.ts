@@ -76,3 +76,30 @@ export const getAllInDB: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
+
+// Get PCO by id
+export const getById: RequestHandler = async (req, res, next) => {
+  try {
+    // Check school exists
+    const school = await School.getSchool(req.params.tenantId);
+    if (!school) return next(new AppError("School does not exist", 404));
+
+    // Check the logged in user has the previlege for this operaiton
+    const loggedInUser = <IUsersDoc>req.user;
+    checkOwnership(loggedInUser, school);
+
+    // Fetch PCO by id
+    const pco = await PCO.getById(req.params.pcoId, school.id);
+    if (!pco) return next(new AppError("PCO not found", 404));
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      data: { pco },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Get 

@@ -462,13 +462,15 @@ export const deleteAdmin: RequestHandler = async (req, res, next) => {
   try {
     const currentAdmin = <IAdminDoc>req.user;
 
+    // Check admin is not deleting itself
+    if (req.params.id === currentAdmin.id) {
+      return next(new AppError("You can not delete your self.", 400));
+    }
+
+    // Delete admin
     const admin = await Admin.deleteAdmin(req.params.id);
     if (!admin)
       return next(new AppError("There is no admin with the specified ID", 404));
-
-    if (admin._id === currentAdmin.id) {
-      return next(new AppError("You can not delete your self.", 400));
-    }
 
     if (admin.first_account) {
       return next(
