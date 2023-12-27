@@ -234,10 +234,10 @@ export default class Admin {
   }
 
   // Delete an admin permanently
-  static async deleteAdmin(id: string): Promise<IAdminDoc | null> {
+  static async deleteAdmin(id: string): Promise<any> {
     try {
       const admin = await AdminModel.findByIdAndDelete(id);
-      return admin.value;
+      return admin;
     } catch (error) {
       throw error;
     }
