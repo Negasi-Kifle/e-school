@@ -79,4 +79,20 @@ export default class PCODAL {
       throw error;
     }
   }
+
+  // Update PCO info
+  static async updatePCO(
+    id: string,
+    data: PCORequests.IUpdateInput
+  ): Promise<IPCODoc | null> {
+    try {
+      const pco = await PCO.findByIdAndUpdate(id, data, {
+        runValidators: true,
+        new: true,
+      });
+      return pco;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

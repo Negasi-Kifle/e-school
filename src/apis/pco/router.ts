@@ -3,8 +3,14 @@ const router = Router();
 import protect from "../../utils/protect";
 import auth from "../../utils/auth";
 import validate from "../../utils/validator";
-import { validateCreateAPI } from "./validation";
-import { createPCO, getAllInDB, getAllInTenant, getById } from "./controller";
+import { validateCreateAPI, validateUpdateAPI } from "./validation";
+import {
+  createPCO,
+  getAllInDB,
+  getAllInTenant,
+  getById,
+  updatePCO,
+} from "./controller";
 
 // Mount routes with their respective controller methods
 router
@@ -25,7 +31,13 @@ router.route("/").get(protect, auth("Super-admin"), getAllInDB);
 
 router
   .route("/tenant/:tenantId/pco/:pcoId")
-  .get(protect, auth("Super-admin"), getById);
+  .get(protect, auth("Super-admin"), getById)
+  .patch(
+    protect,
+    auth("Owner", "Director"),
+    validate(validateUpdateAPI),
+    updatePCO
+  );
 
 // Export
 export default router;

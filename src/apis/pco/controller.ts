@@ -102,4 +102,32 @@ export const getById: RequestHandler = async (req, res, next) => {
   }
 };
 
-// Get 
+// Update PCO
+export const updatePCO: RequestHandler = async (req, res, next) => {
+  try {
+    // Check school exists
+    const school = await School.getSchool(req.params.tenantId);
+    if (!school) return next(new AppError("School does not exist", 404));
+
+    // Check the logged in user has the previlege for this operation
+    const loggedInUser = <IUsersDoc>req.user;
+    checkOwnership(loggedInUser, school);
+
+    // Incoming data
+    const data = <PCORequests.IUpdateInput>req.value;
+    if (data.pmt_title)
+      data.pmt_title_slug = slugifer(data.pmt_title.toLowerCase());
+
+    // Update PCO
+    const pco = await PCO.updatePCO(req.params.pcoId, data);
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      message: "PCO updated successfully",
+      data: { pco },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
