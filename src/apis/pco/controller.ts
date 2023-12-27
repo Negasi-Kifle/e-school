@@ -131,3 +131,67 @@ export const updatePCO: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
+
+// Delete tenant PCOs
+export const deleteTenantPCOs: RequestHandler = async (req, res, next) => {
+  try {
+    // Check school exists
+    const school = await School.getSchool(req.params.tenantId);
+    if (!school) return next(new AppError("School does not exist", 404));
+
+    // Check the logged in user has the previlege for this operation
+    const loggedInUser = <IUsersDoc>req.user;
+    checkOwnership(loggedInUser, school);
+
+    // Delete all
+    await PCO.deleteAllPCOs(req.params.tenantId);
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      message: `All PCOs in ${school.school_name} deleted permanently`,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Delete all PCOs in DB
+export const deleteAllInDB: RequestHandler = async (req, res, next) => {
+  try {
+    await PCO.deleteAllPCOs(); // Delete all PCOs in DB
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      message: "All PCOs in the whole DB deleted permanently",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Delete PCO by id
+export const deleteById: RequestHandler = async (req, res, next) => {
+  try {
+    // Check school exists
+    const school = await School.getSchool(req.params.tenantId);
+    if (!school) return next(new AppError("School does not exist", 404));
+
+    // Check the logged in user has the previlege for this operation
+    const loggedInUser = <IUsersDoc>req.user;
+    checkOwnership(loggedInUser, school);
+
+    // Delete PCO
+    const pco = await PCO.deleteById(req.params.pcoId);
+    if (!pco) return next(new AppError("PCO does not exist", 404));
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      message: "PCO deleted permanently",
+    });
+  } catch (error) {
+    next(error);
+  }
+};

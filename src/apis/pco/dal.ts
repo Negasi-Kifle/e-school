@@ -95,4 +95,27 @@ export default class PCODAL {
       throw error;
     }
   }
+
+  // Delete all PCOs in tenant or  DB
+  static async deleteAllPCOs(tenant_id?: string): Promise<void> {
+    try {
+      if (tenant_id) {
+        await PCO.deleteMany({ tenant_id });
+      } else {
+        await PCO.deleteMany();
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Delete PCO by id
+  static async deleteById(id: string): Promise<IPCODoc | any> {
+    try {
+      const deletedPco = await PCO.findByIdAndDelete(id);
+      return deletedPco;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

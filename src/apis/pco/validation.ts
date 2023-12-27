@@ -1,4 +1,5 @@
 import Joi from "joi";
+import configs from "../../configs";
 
 // Validate the API that's for creating a PCO
 export const validateCreateAPI = Joi.object({
@@ -95,5 +96,14 @@ export const validateUpdateAPI = Joi.object({
   pmt_package_deadline: Joi.date().min("now").messages({
     "date.empty": "Deadline for the payment package can not be empty",
     "date.min": "Deadline for the payment package can not be in the past",
+  }),
+});
+
+// Validate the API that's for deleting all PCOs in DB and tenant
+export const validateDeleteAll = Joi.object({
+  delete_key: Joi.string().valid(configs.delete_key).required().messages({
+    "any.required": "Please provide a valid delete key",
+    "string.empty": "Please provide a valid delete key",
+    "any.only": "Please provide a valid delete key",
   }),
 });
