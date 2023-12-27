@@ -1,4 +1,5 @@
 import Joi from "joi";
+import configs from "../../configs";
 
 // Validate the API that's for creating a PCO
 export const validateCreateAPI = Joi.object({
@@ -50,5 +51,59 @@ export const validateCreateAPI = Joi.object({
   }),
   pmt_package_deadline: Joi.date().min("now").messages({
     "date.empty": "Deadline for the payment package can not be empty",
+  }),
+});
+
+// Validate the API that's for creating a PCO
+export const validateUpdateAPI = Joi.object({
+  pmt_title: Joi.string().max(30).messages({
+    "string.empty": "Give title to the payment collection order",
+    "string.max":
+      "Title of payment collection order should not exceed 30 characters",
+  }),
+  description: Joi.string().messages({
+    "string.empty": "Describe the payment collection order",
+  }),
+  start_date: Joi.date().min("now").messages({
+    "date.min": "Start date can not be in the past",
+  }),
+  deadline: Joi.date().min(Joi.ref("start_date")).messages({
+    "date.min": "Deadline can not be before the start date",
+  }),
+  amount: Joi.number().min(1).messages({
+    "number.min": "Amount of payment must be greater than zero",
+  }),
+  penality: Joi.number().min(1).messages({
+    "number.min": "Penality must be greater than zero",
+  }),
+  levels: Joi.array()
+    .min(1)
+    .items("KG", "Elementary", "High School", "Preparatory", "All")
+    .messages({
+      "array.min": "Please select at leas one level",
+      "array.includes":
+        "Level must be either of KG, Elementary, High School, Preparatory, All",
+    }),
+  grades: Joi.array().min(1).messages({
+    "array.min": "Grade of students is required",
+  }),
+  tenant_id: Joi.string().messages({
+    "string.empty": "School is required",
+  }),
+  pmt_package: Joi.string().messages({
+    "string.empty": "Payment package can not be empty",
+  }),
+  pmt_package_deadline: Joi.date().min("now").messages({
+    "date.empty": "Deadline for the payment package can not be empty",
+    "date.min": "Deadline for the payment package can not be in the past",
+  }),
+});
+
+// Validate the API that's for deleting all PCOs in DB and tenant
+export const validateDeleteAll = Joi.object({
+  delete_key: Joi.string().valid(configs.delete_key).required().messages({
+    "any.required": "Please provide a valid delete key",
+    "string.empty": "Please provide a valid delete key",
+    "any.only": "Please provide a valid delete key",
   }),
 });
