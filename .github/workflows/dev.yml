@@ -1,0 +1,71 @@
+name: Deploy E-School DEV API
+
+on:
+  pull_request:
+    branches:
+      - dev
+    types:
+      - closed
+
+jobs:
+  build:
+    runs-on: trust-server
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build E-School DEV API Docker image
+        if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+        run: |
+          retries=3
+          until [ $retries -le 0 ] || docker build -t e-school_dev_api_image .; do
+            ((retries--))
+          done
+          if [ $? -ne 0 ]; then
+            echo "Build failed!"
+            exit 1
+          else
+            echo "Build succeeded!"
+          fi
+
+  deploy:
+    needs: build
+    runs-on: trust-server
+    steps:
+      - name: Deploy E-School DEV API Docker container
+        if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
+        run: |
+          docker stop e-school_dev_api_container || true
+          docker rm e-school_dev_api_container || true
+          retries=3
+          until [ $retries -le 0 ] || docker run -d \
+          -e API_KEY=${{secrets.DEV_API_KEY}} \
+          -e CLOUDINARY_API_KEY=${{secrets.DEV_CLOUDINARY_API_KEY}} \
+          -e CLOUDINARY_API_SECRET=${{secrets.DEV_CLOUDINARY_API_SECRET}} \
+          -e CLOUDINARY_CLOUD_NAME=${{vars.DEV_CLOUDINARY_CLOUD_NAME}} \
+          -e DELETE_KEY=${{secrets.DEV_DELETE_KEY}} \
+          -e JWT_EXPIRES_IN=${{vars.DEV_JWT_EXPIRES_IN}} \
+          -e JWT_SECRET=${{secrets.DEV_JWT_SECRET}} \
+          -e MONGO_DB=${{secrets.DEV_MONGO_DB}} \
+          -e NODE_ENV=${{vars.DEV_NODE_ENV}} \
+          -e PORT=${{vars.DEV_PORT}} \
+          -p ${{vars.DEV_PORT}}:${{vars.DEV_PORT}} \
+          --name e-school_dev_api_container \
+          --restart unless-stopped \
+          e-school_dev_api_image:latest; do
+            ((retries--))
+          done
+          if [ $? -ne 0 ]; then
+            echo "Build failed!"
+            exit 1
+          else
+           echo "Build succeeded!"
+          fi
+
+  cleanup:
+    needs: [build, deploy]
+    runs-on: trust-server
+    steps:
+      - name: Remove Dangling Docker images
+        run: |
+          docker rmi $(docker images --quiet --filter "dangling=true") || true
