@@ -34,3 +34,45 @@ export const createPCO: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
+
+// Get all PCOs in tenant
+export const getAllInTenant: RequestHandler = async (req, res, next) => {
+  try {
+    // Check school exists
+    const school = await School.getSchool(req.params.tenantId);
+    if (!school) return next(new AppError("School does not exist", 404));
+
+    // Check the logged in user has the previlege for this operation
+    const loggedInUser = <IUsersDoc>req.user;
+    checkOwnership(loggedInUser, school);
+
+    // Get all PCOs in a tenant
+    const tenantPCOs = await PCO.getAllInTenant(req.params.tenantId, req.query);
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      results: tenantPCOs.length,
+      data: { tenantPCOs },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Get all PCOs in DB
+export const getAllInDB: RequestHandler = async (req, res, next) => {
+  try {
+    // Get PCOs in DB
+    const allPCOsInDB = await PCO.getAllInDB(req.query);
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      results: allPCOsInDB.length,
+      data: { allPCOsInDB },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
