@@ -111,14 +111,6 @@ export const getUserById: RequestHandler = async (req, res, next) => {
 // Delete all users in DB
 export const deleteAllOwners: RequestHandler = async (req, res, next) => {
   try {
-    // Delete key from incoming data
-    const { delete_key } = <UserRequests.IDeleteAll>req.value;
-
-    // Check delete key
-    if (delete_key !== configs.delete_key) {
-      return next(new AppError("Please provide a valid delete key", 400));
-    }
-
     // Delete all owners
     await Users.deleteAllOwners();
 

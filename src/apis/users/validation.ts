@@ -1,4 +1,5 @@
 import Joi from "joi";
+import configs from "../../configs";
 
 // Validate the API that create a user data
 export const validateCreateUserAPI = Joi.object({
@@ -41,9 +42,10 @@ export const validateCreateUserAPI = Joi.object({
 
 // Validate that deletes all users
 export const validateDeleteAll = Joi.object({
-  delete_key: Joi.string().required().messages({
+  delete_key: Joi.string().valid(configs.delete_key).required().messages({
     "any.required": "Please provide a valid delete key",
     "string.empty": "Please provide a valid delete key",
+    "any.only": "Please provide a valid delete key",
   }),
 });
 
