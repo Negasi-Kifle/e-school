@@ -340,7 +340,7 @@ export const getTenantUsers: RequestHandler = async (req, res, next) => {
 };
 
 // Reset user password - by owner or superadmin
-export const resetPassword: RequestHandler = async (req, res, next) => {
+export const resetUserPassword: RequestHandler = async (req, res, next) => {
   try {
     // Check school exists
     const school = await School.getSchool(req.params.tenantId);
@@ -368,6 +368,40 @@ export const resetPassword: RequestHandler = async (req, res, next) => {
       status: "SUCCESS",
       message: `Password of ${user.first_name} has been reset successfully`,
       data: { user },
+      default_password: password,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Reset owner password
+export const resetOwnerPasssword: RequestHandler = async (req, res, next) => {
+  try {
+    // Check owner exists
+    const ownerInDb = await Users.getUserById(req.params.ownerId);
+    if (!ownerInDb) return next(new AppError("Owner does not exist", 404));
+
+    // Check user role
+    if (ownerInDb.role !== "Owner")
+      return next(
+        new AppError(
+          "You can not reset password of users other than owner",
+          400
+        )
+      );
+
+    // Generate random password
+    const password = generate_password();
+
+    // Reset owner password
+    const owner = await Users.resetPassword(ownerInDb, password);
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      message: "Owner password has been reset successfully",
+      data: { owner },
       default_password: password,
     });
   } catch (error) {
