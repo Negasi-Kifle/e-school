@@ -127,8 +127,8 @@ export const deleteAllOwners: RequestHandler = async (req, res, next) => {
 // Delete by id
 export const deleteOwnerById: RequestHandler = async (req, res, next) => {
   try {
-    const deletedOwner = await Users.deleteById(req.params.id);
-
+    // Delete owner
+    const deletedOwner = await Users.deleteOwnerById(req.params.id);
     if (!deletedOwner) return next(new AppError("Owner does not exist", 404));
 
     // Response
@@ -154,6 +154,36 @@ export const deleteAllUsers: RequestHandler = async (req, res, next) => {
     res.status(200).json({
       status: "SUCCESS",
       message: `All users with ${role} role deleted permanently`,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Delete a user in a tenant
+export const deleteUserById: RequestHandler = async (req, res, next) => {
+  try {
+    // Check school exists
+    const school = await School.getSchool(req.params.tenantId);
+    if (!school) return next(new AppError("School does not exist", 404));
+
+    // Check the logged in user has the previlege for this operation
+    const loggedInUser = <IUsersDoc>req.user;
+    checkOwnership(loggedInUser, school);
+
+    // User can not delete him/herself
+    if (loggedInUser.id === req.params.userId)
+      return next(new AppError("You can not delete yourself", 400));
+
+    // Delete user
+    const user = await Users.deleteUserById(req.params.userId, school.id);
+    if (user.deletedCount === 0)
+      return next(new AppError("User does not exist", 404));
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      message: "User deleted premanently",
     });
   } catch (error) {
     next(error);

@@ -40,7 +40,7 @@ export const validateCreateUserAPI = Joi.object({
   }).required(),
 });
 
-// Validate that deletes all users
+// Validate the API that deletes all users
 export const validateDeleteAll = Joi.object({
   delete_key: Joi.string().valid(configs.delete_key).required().messages({
     "any.required": "Please provide a valid delete key",

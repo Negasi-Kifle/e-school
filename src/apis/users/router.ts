@@ -16,6 +16,7 @@ import {
   createUser,
   deleteAllOwners,
   deleteAllUsers,
+  deleteUserById,
   deleteOwnerById,
   deleteTenantUsers,
   getAllOwners,
@@ -110,7 +111,8 @@ router
 
 router
   .route("/tenant/:tenantId/user/:userId")
-  .get(protect, auth("Owner", "Director", "Super-admin", "Admin"), getUserById);
+  .get(protect, auth("Owner", "Director", "Super-admin", "Admin"), getUserById)
+  .delete(protect, auth("Owner", "Director"), deleteUserById);
 
 router.patch(
   "/resetpswd/tenant/:tenantId/user/:userId",

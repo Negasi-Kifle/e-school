@@ -13,7 +13,7 @@ export default function (loggedInUser: IUsersDoc, tenant: ISchoolDoc) {
   // Non-owner user
   if (
     rolesInTenant.includes(loggedInUser.role) &&
-    loggedInUser.tenant_id !== tenant.owner
+    loggedInUser.tenant_id.toString() !== tenant.id
   ) {
     throw new AppError("You don't belong to this school", 400);
   }
