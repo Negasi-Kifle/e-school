@@ -21,6 +21,7 @@ import {
   getAllOwners,
   getAllUsers,
   getOwnerById,
+  getProfileData,
   getTenantUsers,
   getUserById,
   login,
@@ -58,7 +59,7 @@ router
 
 router
   .route("/owners/:id")
-  .get(protect, auth("Owner", "Super-admin"), getOwnerById)
+  .get(protect, auth("Super-admin"), getOwnerById)
   .delete(protect, auth("Super-admin"), deleteOwnerById);
 
 router.patch(
@@ -70,12 +71,19 @@ router.patch(
 
 router.post("/login", validate(validateLogin), login);
 
-router.patch(
-  "/profile",
-  protect,
-  validate(validateUpdateProfileAPI),
-  updateProfile
-);
+router
+  .route("/profile")
+  .patch(
+    protect,
+    auth("Owner", "Director", "Teacher", "Assistant"),
+    validate(validateUpdateProfileAPI),
+    updateProfile
+  )
+  .get(
+    protect,
+    auth("Owner", "Director", "Teacher", "Assistant"),
+    getProfileData
+  );
 
 router.patch(
   "/changepswd",
