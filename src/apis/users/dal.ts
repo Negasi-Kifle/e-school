@@ -51,10 +51,18 @@ export default class UserDAL {
   }
 
   // Get user by id
-  static async getUserById(id: string): Promise<IUsersDoc | null> {
+  static async getUserById(
+    _id: string,
+    tenant_id?: string
+  ): Promise<IUsersDoc | null> {
     try {
-      const user = await User.findById(id);
-      return user;
+      if (tenant_id) {
+        const user = await User.findOne({ _id, tenant_id });
+        return user;
+      } else {
+        const user = await User.findById(_id);
+        return user;
+      }
     } catch (error) {
       throw error;
     }

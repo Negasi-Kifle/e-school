@@ -22,6 +22,7 @@ import {
   getAllUsers,
   getOwnerById,
   getTenantUsers,
+  getUserById,
   login,
   updateProfile,
 } from "./controller";
@@ -91,6 +92,10 @@ router
     deleteTenantUsers
   )
   .get(protect, auth("Super-admin", "Owner"), getTenantUsers);
+
+router
+  .route("/tenant/:tenantId/user/:userId")
+  .get(protect, auth("Owner", "Director", "Super-admin", "Admin"), getUserById);
 
 // Export router
 export default router;

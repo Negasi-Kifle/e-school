@@ -5,6 +5,7 @@ import ISchoolDoc from "./dto";
 import configs from "../../configs";
 import IAdminDoc from "../admin/dto";
 import UserDAL from "../users/dal";
+import IUsersDoc from "../users/dto";
 
 // Create a school
 export const createSchool: RequestHandler = async (req, res, next) => {
@@ -24,10 +25,6 @@ export const createSchool: RequestHandler = async (req, res, next) => {
 
     // Create a school
     const school = await School.createSchool(data);
-
-    // Update "tenant_id" field of the owner
-    owner.tenant_id = school.id;
-    await owner.save();
 
     // Respond
     res.status(200).json({
@@ -139,14 +136,29 @@ export const getSchoolById: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const getSchoolByOwner: RequestHandler = async (req, res, next) => {
+export const getSchoolsByOwner: RequestHandler = async (req, res, next) => {
   try {
-    const id = req.params.id;
-    const school = await School.getSchoolByOwner(id);
+    // If logged in user is owner, check id in the request params matches with owner's id
+    const loggedInUser = <IUsersDoc>req.user;
+    if (
+      loggedInUser.role === "Owner" &&
+      loggedInUser.id !== req.params.ownerId
+    ) {
+      return next(
+        new AppError(
+          "You can see only schools registered under your account.",
+          400
+        )
+      );
+    }
+
+    // Get schools of an owner
+    const schools = await School.getSchoolsByOwner(req.params.ownerId);
 
     res.status(200).json({
       status: "SUCCESS",
-      data: { school },
+      results: schools.length,
+      data: { schools },
     });
   } catch (err) {
     next(err);
@@ -156,7 +168,7 @@ export const getSchoolByOwner: RequestHandler = async (req, res, next) => {
 export const getStudentsBySchoolId: RequestHandler = async (req, res, next) => {
   try {
     const id = req.params.id;
-    const school = await School.getSchoolByOwner(id);
+    const school = await School.getSchoolsByOwner(id);
 
     res.status(200).json({
       status: "SUCCESS",
