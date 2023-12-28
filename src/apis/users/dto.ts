@@ -36,7 +36,6 @@ declare global {
       password: string;
       is_default_pswd: true;
       is_credential_changed: false;
-      tenant_id: string;
       address: string;
       prof_img: IProfileImg;
     }

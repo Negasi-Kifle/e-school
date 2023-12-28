@@ -7,7 +7,7 @@ import {
   deleteAllSchools,
   deleteSchool,
   getSchoolById,
-  getSchoolByOwner,
+  getSchoolsByOwner,
   getSchools,
   updateSchool,
   updateSchoolStatus,
@@ -48,14 +48,11 @@ router.patch(
 );
 
 router.get(
-  "/owner/:id",
+  "/owner/:ownerId",
   protect,
   auth("Super-admin", "Admin", "Call-center", "Owner"),
-  getSchoolByOwner
+  getSchoolsByOwner
 );
-
-
-
 
 router
   .route("/:id")

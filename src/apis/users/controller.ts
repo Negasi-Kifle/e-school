@@ -6,6 +6,8 @@ import configs from "../../configs";
 import generate_token from "../../utils/generate_token";
 import IUsersDoc from "./dto";
 import School from "../schools/dal";
+import checkOwnership from "../students/utils/check_ownership";
+import User from "./model";
 
 // Create user doc
 export const createOwner: RequestHandler = async (req, res, next) => {
@@ -57,6 +59,31 @@ export const getOwnerById: RequestHandler = async (req, res, next) => {
     res.status(200).json({
       status: "SUCCESS",
       data: { owner },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Get user by id
+export const getUserById: RequestHandler = async (req, res, next) => {
+  try {
+    // Check school exists
+    const school = await School.getSchool(req.params.tenantId);
+    if (!school) return next(new AppError("School does not exist", 404));
+
+    // Check the logged in user has the previlege for this operation
+    const loggedInUser = <IUsersDoc>req.user;
+    checkOwnership(loggedInUser, school);
+
+    // Fetch user data
+    const user = await Users.getUserById(req.params.id, school.id);
+    if (!user) return next(new AppError("User not found", 404));
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      data: { user },
     });
   } catch (error) {
     next(error);
@@ -228,21 +255,15 @@ export const createUser: RequestHandler = async (req, res, next) => {
     // Incoming data
     const data = <UserRequests.ICreateUser>req.value;
 
-    const tenantId = req.params.tenantId; // Tenant id from req.params
-
-    // If it is an owner trying to create a user, check he/she owns the school
-    const loggedInUser = <IUsersDoc>req.user;
-    if (
-      loggedInUser.role === "Owner" &&
-      (!loggedInUser.tenant_id || loggedInUser.tenant_id !== tenantId)
-    ) {
-      return next(new AppError("You don't own the school", 400));
-    }
-
     // Check school exists
-    const school = await School.getSchool(data.tenant_id);
+    const school = await School.getSchool(req.params.tenantId);
     if (!school) return next(new AppError("Unknown school selected", 404));
-    data.tenant_id = school.id;
+
+    // Check the logged in user has the previlege for this operation
+    const loggedInUser = <IUsersDoc>req.user;
+    checkOwnership(loggedInUser, school);
+
+    data.tenant_id = school.id; // Assign school id to tenant_id
 
     // Generate password
     data.password = generate_password();
@@ -297,16 +318,13 @@ export const deleteTenantUsers: RequestHandler = async (req, res, next) => {
 // Get all users of a tenant
 export const getTenantUsers: RequestHandler = async (req, res, next) => {
   try {
-    // If it is an owner trying to delete all users of the tenant, check he/she owns the school
-    const loggedInUser = <IUsersDoc>req.user;
-    const tenantId = req.params.tenantId; // Tenant id from req.params
+    // Check school exists
+    const school = await School.getSchool(req.params.tenantId);
+    if (!school) return next(new AppError("Unknown school selected", 404));
 
-    if (
-      loggedInUser.role === "Owner" &&
-      (!loggedInUser.tenant_id || loggedInUser.tenant_id !== tenantId)
-    ) {
-      return next(new AppError("You don't own this school", 400));
-    }
+    // Check the logged in user has the previlege for this operation
+    const loggedInUser = <IUsersDoc>req.user;
+    checkOwnership(loggedInUser, school);
 
     const tenantUsers = await Users.getTenantUsers(req.params.tenantId);
 
@@ -315,6 +333,42 @@ export const getTenantUsers: RequestHandler = async (req, res, next) => {
       status: "SUCCESS",
       results: tenantUsers.length,
       data: { tenantUsers },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Reset user password - by owner or superadmin
+export const resetPassword: RequestHandler = async (req, res, next) => {
+  try {
+    // Check school exists
+    const school = await School.getSchool(req.params.tenantId);
+    if (!school) return next(new AppError("School does not exist", 404));
+
+    // Check the logged in use the previlege for this operation
+    const loggedInUser = <IUsersDoc>req.user;
+    checkOwnership(loggedInUser, school);
+
+    // Check user exists
+    const userInDb = await Users.getUserById(req.params.userId, school.id);
+    if (!userInDb) return next(new AppError("User does not exist", 404));
+
+    // Check user is not resetting his/her password
+    if (userInDb.id === loggedInUser.id)
+      return next(new AppError("You can not reset your own password", 400));
+
+    const password = generate_password(); // Generate random password
+
+    // Reset user password
+    const user = await Users.resetPassword(userInDb, password);
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      message: `Password of ${user.first_name} has been reset successfully`,
+      data: { user },
+      default_password: password,
     });
   } catch (error) {
     next(error);

@@ -23,14 +23,6 @@ export const validateCreateUserAPI = Joi.object({
       "any.only":
         "Role must be one of 'Owner', 'Director', 'Assistant', or 'Teacher'",
     }),
-  tenant_id: Joi.string().when("role", {
-    is: Joi.not("Owner"),
-    then: Joi.string().required().messages({
-      "any.required": "Tenant ID is required",
-      "string.empty": "Tenant ID is required",
-    }),
-    otherwise: Joi.string().allow("").optional(), // If role is not 'Owner', tenant_id is optional
-  }),
   address: Joi.string().required().messages({
     "any.required": "Address is required",
     "string.empty": "Address is required",

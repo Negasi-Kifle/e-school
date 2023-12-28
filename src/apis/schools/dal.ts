@@ -1,6 +1,7 @@
 import SchoolModel from "./model";
 import ISchoolDoc from "./dto";
 import APIFeatures from "../../utils/api_features";
+import IUsersDoc from "../users/dto";
 
 export default class School {
   // Create a school
@@ -85,9 +86,12 @@ export default class School {
   }
 
   // Get a school by owner id
-  static async getSchoolByOwner(id: string): Promise<ISchoolDoc | null> {
+  static async getSchoolsByOwner(id: string): Promise<ISchoolDoc[]> {
     try {
-      const school = await SchoolModel.findOne({ owner: id });
+      const school = await SchoolModel.find({ owner: id }).populate({
+        path: "owner",
+        select: "first_name last_name phone_num",
+      });
       return school;
     } catch (error) {
       throw error;

@@ -51,10 +51,18 @@ export default class UserDAL {
   }
 
   // Get user by id
-  static async getUserById(id: string): Promise<IUsersDoc | null> {
+  static async getUserById(
+    _id: string,
+    tenant_id?: string
+  ): Promise<IUsersDoc | null> {
     try {
-      const user = await User.findById(id);
-      return user;
+      if (tenant_id) {
+        const user = await User.findOne({ _id, tenant_id });
+        return user;
+      } else {
+        const user = await User.findById(_id);
+        return user;
+      }
     } catch (error) {
       throw error;
     }
@@ -158,6 +166,21 @@ export default class UserDAL {
     try {
       const tenantUsers = await User.find({ tenant_id });
       return tenantUsers;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Reset user password
+  static async resetPassword(
+    user: IUsersDoc,
+    password: string
+  ): Promise<IUsersDoc> {
+    try {
+      user.password = password;
+      user.is_default_pswd = true;
+      await user.save();
+      return user;
     } catch (error) {
       throw error;
     }
