@@ -7,6 +7,7 @@ import generate_token from "../../utils/generate_token";
 import IUsersDoc from "./dto";
 import School from "../schools/dal";
 import checkOwnership from "../students/utils/check_ownership";
+import User from "./model";
 
 // Create user doc
 export const createOwner: RequestHandler = async (req, res, next) => {
@@ -332,6 +333,42 @@ export const getTenantUsers: RequestHandler = async (req, res, next) => {
       status: "SUCCESS",
       results: tenantUsers.length,
       data: { tenantUsers },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Reset user password - by owner or superadmin
+export const resetPassword: RequestHandler = async (req, res, next) => {
+  try {
+    // Check school exists
+    const school = await School.getSchool(req.params.tenantId);
+    if (!school) return next(new AppError("School does not exist", 404));
+
+    // Check the logged in use the previlege for this operation
+    const loggedInUser = <IUsersDoc>req.user;
+    checkOwnership(loggedInUser, school);
+
+    // Check user exists
+    const userInDb = await Users.getUserById(req.params.userId, school.id);
+    if (!userInDb) return next(new AppError("User does not exist", 404));
+
+    // Check user is not resetting his/her password
+    if (userInDb.id === loggedInUser.id)
+      return next(new AppError("You can not reset your own password", 400));
+
+    const password = generate_password(); // Generate random password
+
+    // Reset user password
+    const user = await Users.resetPassword(userInDb, password);
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      message: `Password of ${user.first_name} has been reset successfully`,
+      data: { user },
+      default_password: password,
     });
   } catch (error) {
     next(error);

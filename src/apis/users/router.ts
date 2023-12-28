@@ -24,6 +24,7 @@ import {
   getTenantUsers,
   getUserById,
   login,
+  resetPassword,
   updateProfile,
 } from "./controller";
 
@@ -96,6 +97,13 @@ router
 router
   .route("/tenant/:tenantId/user/:userId")
   .get(protect, auth("Owner", "Director", "Super-admin", "Admin"), getUserById);
+
+router.patch(
+  "/resetpswd/tenant/:tenantId/user/:userId",
+  protect,
+  auth("Super-admin", "Owner"),
+  resetPassword
+);
 
 // Export router
 export default router;

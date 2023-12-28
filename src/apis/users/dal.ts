@@ -170,4 +170,19 @@ export default class UserDAL {
       throw error;
     }
   }
+
+  // Reset user password
+  static async resetPassword(
+    user: IUsersDoc,
+    password: string
+  ): Promise<IUsersDoc> {
+    try {
+      user.password = password;
+      user.is_default_pswd = true;
+      await user.save();
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
