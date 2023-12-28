@@ -65,6 +65,24 @@ export const getOwnerById: RequestHandler = async (req, res, next) => {
   }
 };
 
+// Get profile data
+export const getProfileData: RequestHandler = async (req, res, next) => {
+  try {
+    const loggedInUser = <IUsersDoc>req.user; // Data of the logged in user
+
+    // Get user data
+    const user = await Users.getUserById(loggedInUser.id);
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      data: { user },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Get user by id
 export const getUserById: RequestHandler = async (req, res, next) => {
   try {
