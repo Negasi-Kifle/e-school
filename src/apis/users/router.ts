@@ -24,7 +24,8 @@ import {
   getTenantUsers,
   getUserById,
   login,
-  resetPassword,
+  resetOwnerPasssword,
+  resetUserPassword,
   updateProfile,
 } from "./controller";
 
@@ -60,7 +61,12 @@ router
   .get(protect, auth("Owner", "Super-admin"), getOwnerById)
   .delete(protect, auth("Super-admin"), deleteOwnerById);
 
-router.route("/").get(protect, auth("Super-admin"), getAllUsers);
+router.patch(
+  "/owners/resetpswd/:ownerId",
+  protect,
+  auth("Super-admin"),
+  resetOwnerPasssword
+);
 
 router.post("/login", validate(validateLogin), login);
 
@@ -101,8 +107,8 @@ router
 router.patch(
   "/resetpswd/tenant/:tenantId/user/:userId",
   protect,
-  auth("Super-admin", "Owner"),
-  resetPassword
+  auth("Owner", "Director"),
+  resetUserPassword
 );
 
 // Export router
