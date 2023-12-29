@@ -23,11 +23,9 @@ export const updateDefaultPasswordValidation = Joi.object({
 
 export const updatePhoneNumberValidation = Joi.object({
   phone_number: Joi.string().required(),
-  email: Joi.string().required(),
 });
 
-
-export const updateParentPasswordValidation = Joi.object({
+export const updatePasswordValidation = Joi.object({
   current_password: Joi.string().required(),
   password: Joi.string().required(),
   password_confirm: Joi.string().required().equal(Joi.ref('password')),
