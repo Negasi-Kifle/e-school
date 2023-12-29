@@ -54,15 +54,6 @@ userSchema.pre("save", function (this: IUsersDoc, next) {
   next();
 });
 
-// Populate school info in find method
-userSchema.pre(/^find/, function (this: IUsersDoc, next) {
-  this.populate({
-    path: "tenant_id",
-    select: "school_name school_address level status",
-  });
-  next();
-});
-
 // Check password
 userSchema.methods.comparePassword = function (
   candidatePassword: string,

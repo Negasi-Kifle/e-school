@@ -8,6 +8,7 @@ import {
   validateCreateUserAPI,
   validateDeleteAll,
   validateLogin,
+  validatePswdResetAPI,
   validateUpdateProfileAPI,
 } from "./validation";
 import {
@@ -16,6 +17,7 @@ import {
   createUser,
   deleteAllOwners,
   deleteAllUsers,
+  deleteUserById,
   deleteOwnerById,
   deleteTenantUsers,
   getAllOwners,
@@ -63,9 +65,10 @@ router
   .delete(protect, auth("Super-admin"), deleteOwnerById);
 
 router.patch(
-  "/owners/resetpswd/:ownerId",
+  "/owners/resetpswd",
   protect,
   auth("Super-admin"),
+  validate(validatePswdResetAPI),
   resetOwnerPasssword
 );
 
@@ -110,7 +113,8 @@ router
 
 router
   .route("/tenant/:tenantId/user/:userId")
-  .get(protect, auth("Owner", "Director", "Super-admin", "Admin"), getUserById);
+  .get(protect, auth("Owner", "Director", "Super-admin", "Admin"), getUserById)
+  .delete(protect, auth("Owner", "Director"), deleteUserById);
 
 router.patch(
   "/resetpswd/tenant/:tenantId/user/:userId",

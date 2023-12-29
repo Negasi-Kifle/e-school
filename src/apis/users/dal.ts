@@ -87,10 +87,27 @@ export default class UserDAL {
     }
   }
 
-  // Delete by id
-  static async deleteById(id: string): Promise<any> {
+  // Delete owner by id
+  static async deleteOwnerById(id: string): Promise<IUsersDoc | any> {
     try {
-      const deletedUser = await User.findByIdAndDelete(id);
+      const deletedUser = await User.deleteOne({ id, role: "Owner" });
+      return deletedUser;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Delete user by id
+  static async deleteUserById(
+    _id: string,
+    tenant_id: string
+  ): Promise<IUsersDoc | any> {
+    try {
+      const deletedUser = await User.deleteOne({
+        _id,
+        tenant_id,
+        role: { $ne: "Owner" },
+      });
       return deletedUser;
     } catch (error) {
       throw error;

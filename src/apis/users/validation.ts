@@ -1,4 +1,5 @@
 import Joi from "joi";
+import configs from "../../configs";
 
 // Validate the API that create a user data
 export const validateCreateUserAPI = Joi.object({
@@ -39,11 +40,12 @@ export const validateCreateUserAPI = Joi.object({
   }).required(),
 });
 
-// Validate that deletes all users
+// Validate the API that deletes all users
 export const validateDeleteAll = Joi.object({
-  delete_key: Joi.string().required().messages({
+  delete_key: Joi.string().valid(configs.delete_key).required().messages({
     "any.required": "Please provide a valid delete key",
     "string.empty": "Please provide a valid delete key",
+    "any.only": "Please provide a valid delete key",
   }),
 });
 
@@ -81,5 +83,13 @@ export const validateChangePswdAPI = Joi.object({
   new_pswd: Joi.string().required().messages({
     "any.required": "Please enter new password",
     "string.empty": "Please enter new password",
+  }),
+});
+
+// Validate the password-reset API
+export const validatePswdResetAPI = Joi.object({
+  user_id: Joi.string().required().messages({
+    "any.required": "Please provide user id",
+    "string.empty": "Please provide user id",
   }),
 });
