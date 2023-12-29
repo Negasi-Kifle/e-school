@@ -93,3 +93,33 @@ export const validatePswdResetAPI = Joi.object({
     "string.empty": "Please provide user id",
   }),
 });
+
+// Validate the API that's for updating user status
+export const validateUpdateUserStatusAPI = Joi.object({
+  user_id: Joi.string().required().messages({
+    "any.required": "User id is required",
+    "string.empty": "User id is required",
+  }),
+  tenant_id: Joi.string().required().messages({
+    "any.required": "School id is required",
+    "string.empty": "School id is required",
+  }),
+  status: Joi.string().valid("Active", "Inactive").required().messages({
+    "any.required": "Status is required",
+    "string.empty": "Status is required",
+    "any.only": "Status must be either Active or Inactive",
+  }),
+});
+
+// Validate the API that's for updating user status
+export const validateUpdateOwnerStatusAPI = Joi.object({
+  owner_id: Joi.string().required().messages({
+    "any.required": "Owner id is required",
+    "string.empty": "Owner id is required",
+  }),
+  status: Joi.string().valid("Active", "Inactive").required().messages({
+    "any.required": "Status is required",
+    "string.empty": "Status is required",
+    "any.only": "Status must be either Active or Inactive",
+  }),
+});

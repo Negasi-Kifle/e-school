@@ -127,10 +127,12 @@ export default class UserDAL {
     }
   }
 
-  // Get user by phone number
-  static async getByPhoneNum(phone_num: string): Promise<IUsersDoc | null> {
+  // Get user by phone number and status active
+  static async getActiveUserByPhoneNum(
+    phone_num: string
+  ): Promise<IUsersDoc | null> {
     try {
-      const user = await User.findOne({ phone_num });
+      const user = await User.findOne({ phone_num, status: "Active" });
       return user;
     } catch (error) {
       throw error;
@@ -198,6 +200,40 @@ export default class UserDAL {
       user.is_default_pswd = true;
       await user.save();
       return user;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Update user status (user in a tenant)
+  static async updateUserStatus(
+    data: UserRequests.IUpdateUserStatus
+  ): Promise<IUsersDoc | null> {
+    try {
+      const user = await User.findOneAndUpdate(
+        { _id: data.user_id, tenant_id: data.tenant_id },
+        { status: data.status },
+        { runValidators: true, new: true }
+      );
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Update owner status
+  static async updateOwnerStatus(
+    data: UserRequests.IUpdateOwnerStatus
+  ): Promise<IUsersDoc | null> {
+    try {
+      const owner = await User.findOneAndUpdate(
+        {
+          _id: data.owner_id,
+        },
+        { status: data.status },
+        { runValidators: true, new: true }
+      );
+      return owner;
     } catch (error) {
       throw error;
     }

@@ -214,7 +214,7 @@ export const login: RequestHandler = async (req, res, next) => {
     const data = <UserRequests.ILogin>req.value;
 
     // Find user by phone number
-    const user = await Users.getByPhoneNum(data.phone_num);
+    const user = await Users.getActiveUserByPhoneNum(data.phone_num);
 
     // Check user exists and has provided valid credential
     if (!user || !user.comparePassword(data.password, user.password)) {
@@ -442,6 +442,60 @@ export const resetOwnerPasssword: RequestHandler = async (req, res, next) => {
       message: "Owner password has been reset successfully",
       data: { owner },
       default_password: password,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Update user status (user in tenant)
+export const updateUserStatus: RequestHandler = async (req, res, next) => {
+  try {
+    // Incoming data
+    const data = <UserRequests.IUpdateUserStatus>req.value;
+
+    // Check school exist
+    const school = await School.getSchool(data.tenant_id);
+    if (!school) return next(new AppError("School does not exist", 404));
+
+    // Check the logged in user has the previlege for this operation
+    const loggedInUser = <IUsersDoc>req.user;
+    checkOwnership(loggedInUser, school);
+
+    // Check user is not updating his/her own status
+    if (loggedInUser.id === data.user_id)
+      return next(new AppError("You can not update your own status", 400));
+
+    // Update user status
+    const user = await Users.updateUserStatus(data);
+    if (!user) return next(new AppError("User does not exist", 404));
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      message: "User status updated successfully",
+      data: { user },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Update owner status
+export const updateOwnerStatus: RequestHandler = async (req, res, next) => {
+  try {
+    // Incoming data
+    const data = <UserRequests.IUpdateOwnerStatus>req.value;
+
+    // Update status
+    const owner = await Users.updateOwnerStatus(data);
+    if (!owner) return next(new AppError("Owner does not exist", 404));
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      message: "Owner status updated successfully",
+      data: { owner },
     });
   } catch (error) {
     next(error);
