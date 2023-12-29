@@ -193,6 +193,7 @@ export const deleteUserById: RequestHandler = async (req, res, next) => {
 // Get all users in DB
 export const getAllUsers: RequestHandler = async (req, res, next) => {
   try {
+    // Get all users in DB
     const users = await Users.getAllUsers(req.query);
 
     // Response
@@ -249,12 +250,12 @@ export const updateProfile: RequestHandler = async (req, res, next) => {
 
     // Update user
     const user = await Users.updateProfile(loggedInUser.id, data);
-    if (!user) return next(new AppError("User does not exist", 404));
+    if (!user) return next(new AppError("Could not find your account", 404));
 
     // Response
     res.status(200).json({
       status: "SUCCESS",
-      message: "Profile updated successfully",
+      message: "Your profile has been updated successfully",
       data: { user },
     });
   } catch (error) {
@@ -326,21 +327,13 @@ export const createUser: RequestHandler = async (req, res, next) => {
 // Delete users in tenant
 export const deleteTenantUsers: RequestHandler = async (req, res, next) => {
   try {
-    // Check delete key
-    const { delete_key } = <UserRequests.IDeleteAll>req.value;
-    if (delete_key !== configs.delete_key)
-      return next(new AppError("Please provide a valid delete key", 400));
+    // Check school exist
+    const school = await School.getSchool(req.params.tenantId);
+    if (!school) return next(new AppError("School does not exist", 404));
 
-    // If it is an owner trying to delete all users of the tenant, check he/she owns the school
+    // Check the logged in user has the previlege for this operation
     const loggedInUser = <IUsersDoc>req.user;
-    const tenantId = req.params.tenantId; // Tenant id from req.params
-
-    if (
-      loggedInUser.role === "Owner" &&
-      (!loggedInUser.tenant_id || loggedInUser.tenant_id !== tenantId)
-    ) {
-      return next(new AppError("You don't own the school", 400));
-    }
+    checkOwnership(loggedInUser, school);
 
     // Delete tenant users
     await Users.deleteTenantUsers(req.params.tenantId);
@@ -418,8 +411,11 @@ export const resetUserPassword: RequestHandler = async (req, res, next) => {
 // Reset owner password
 export const resetOwnerPasssword: RequestHandler = async (req, res, next) => {
   try {
+    // Get user id from request body
+    const { user_id } = <UserRequests.IResetPassword>req.value;
+
     // Check owner exists
-    const ownerInDb = await Users.getUserById(req.params.ownerId);
+    const ownerInDb = await Users.getUserById(user_id);
     if (!ownerInDb) return next(new AppError("Owner does not exist", 404));
 
     // Check user role

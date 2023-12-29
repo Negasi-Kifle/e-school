@@ -85,3 +85,11 @@ export const validateChangePswdAPI = Joi.object({
     "string.empty": "Please enter new password",
   }),
 });
+
+// Validate the password-reset API
+export const validatePswdResetAPI = Joi.object({
+  user_id: Joi.string().required().messages({
+    "any.required": "Please provide user id",
+    "string.empty": "Please provide user id",
+  }),
+});

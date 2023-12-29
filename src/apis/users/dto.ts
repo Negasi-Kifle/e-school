@@ -68,5 +68,8 @@ declare global {
       address: string;
       prof_img: IProfileImg;
     }
+    interface IResetPassword {
+      user_id: string;
+    }
   }
 }

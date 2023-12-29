@@ -8,6 +8,7 @@ import {
   validateCreateUserAPI,
   validateDeleteAll,
   validateLogin,
+  validatePswdResetAPI,
   validateUpdateProfileAPI,
 } from "./validation";
 import {
@@ -64,9 +65,10 @@ router
   .delete(protect, auth("Super-admin"), deleteOwnerById);
 
 router.patch(
-  "/owners/resetpswd/:ownerId",
+  "/owners/resetpswd",
   protect,
   auth("Super-admin"),
+  validate(validatePswdResetAPI),
   resetOwnerPasssword
 );
 
