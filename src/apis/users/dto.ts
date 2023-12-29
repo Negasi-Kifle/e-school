@@ -71,9 +71,13 @@ declare global {
     interface IResetPassword {
       user_id: string;
     }
-    interface IUpdateStatus {
+    interface IUpdateUserStatus {
       user_id: string;
       tenant_id: string;
+      status: "Active" | "Inactive";
+    }
+    interface IUpdateOwnerStatus {
+      owner_id: string;
       status: "Active" | "Inactive";
     }
   }

@@ -9,6 +9,7 @@ import {
   validateDeleteAll,
   validateLogin,
   validatePswdResetAPI,
+  validateUpdateOwnerStatusAPI,
   validateUpdateProfileAPI,
   validateUpdateUserStatusAPI,
 } from "./validation";
@@ -32,6 +33,7 @@ import {
   resetUserPassword,
   updateProfile,
   updateUserStatus,
+  updateOwnerStatus,
 } from "./controller";
 
 // Mount routes with their respective controller methods
@@ -103,6 +105,14 @@ router.patch(
   auth("Owner"),
   validate(validateUpdateUserStatusAPI),
   updateUserStatus
+);
+
+router.patch(
+  "/ownerstatus",
+  protect,
+  auth("Super-admin"),
+  validate(validateUpdateOwnerStatusAPI),
+  updateOwnerStatus
 );
 
 router

@@ -207,7 +207,7 @@ export default class UserDAL {
 
   // Update user status (user in a tenant)
   static async updateUserStatus(
-    data: UserRequests.IUpdateStatus
+    data: UserRequests.IUpdateUserStatus
   ): Promise<IUsersDoc | null> {
     try {
       const user = await User.findOneAndUpdate(
@@ -216,6 +216,24 @@ export default class UserDAL {
         { runValidators: true, new: true }
       );
       return user;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Update owner status
+  static async updateOwnerStatus(
+    data: UserRequests.IUpdateOwnerStatus
+  ): Promise<IUsersDoc | null> {
+    try {
+      const owner = await User.findOneAndUpdate(
+        {
+          _id: data.owner_id,
+        },
+        { status: data.status },
+        { runValidators: true, new: true }
+      );
+      return owner;
     } catch (error) {
       throw error;
     }

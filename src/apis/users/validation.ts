@@ -110,3 +110,16 @@ export const validateUpdateUserStatusAPI = Joi.object({
     "any.only": "Status must be either Active or Inactive",
   }),
 });
+
+// Validate the API that's for updating user status
+export const validateUpdateOwnerStatusAPI = Joi.object({
+  owner_id: Joi.string().required().messages({
+    "any.required": "Owner id is required",
+    "string.empty": "Owner id is required",
+  }),
+  status: Joi.string().valid("Active", "Inactive").required().messages({
+    "any.required": "Status is required",
+    "string.empty": "Status is required",
+    "any.only": "Status must be either Active or Inactive",
+  }),
+});

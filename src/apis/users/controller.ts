@@ -452,7 +452,7 @@ export const resetOwnerPasssword: RequestHandler = async (req, res, next) => {
 export const updateUserStatus: RequestHandler = async (req, res, next) => {
   try {
     // Incoming data
-    const data = <UserRequests.IUpdateStatus>req.value;
+    const data = <UserRequests.IUpdateUserStatus>req.value;
 
     // Check school exist
     const school = await School.getSchool(data.tenant_id);
@@ -475,6 +475,27 @@ export const updateUserStatus: RequestHandler = async (req, res, next) => {
       status: "SUCCESS",
       message: "User status updated successfully",
       data: { user },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Update owner status
+export const updateOwnerStatus: RequestHandler = async (req, res, next) => {
+  try {
+    // Incoming data
+    const data = <UserRequests.IUpdateOwnerStatus>req.value;
+
+    // Update status
+    const owner = await Users.updateOwnerStatus(data);
+    if (!owner) return next(new AppError("Owner does not exist", 404));
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      message: "Owner status updated successfully",
+      data: { owner },
     });
   } catch (error) {
     next(error);
