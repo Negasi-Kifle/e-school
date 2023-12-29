@@ -3,6 +3,7 @@ import IParentDoc from "./dto";
 import APIFeatures from "../../utils/api_features";
 import IStudentDoc from "../students/dto";
 import Student from "../students/model";
+import bcrypt from "bcryptjs";
 
 export default class Parent {
   // Create an parent
@@ -74,24 +75,8 @@ export default class Parent {
     }
   }
 
-  // Update parent profile
-  static async updateParentProfile(
-    id: string,
-    data: ParentRequest.IUpdateParentProfile
-  ): Promise<IParentDoc | null> {
-    try {
-      const parent = await ParentModel.findByIdAndUpdate(
-        id,
-        {
-          first_name: data.first_name,
-          last_name: data.last_name,
-        },
-        { runValidators: true, new: true }
-      );
-      return parent;
-    } catch (error) {
-      throw error;
-    }
+  static async comparePassword(candidatePassword: string, password: string){
+    return bcrypt.compareSync(candidatePassword, password);
   }
 
   // Update email or phone number
@@ -187,10 +172,10 @@ export default class Parent {
   }
 
   // Delete an parent permanently
-  static async deleteParent(id: string): Promise<IParentDoc | null> {
+  static async deleteParent(id: string): Promise<any | null> {
     try {
       const parent = await ParentModel.findByIdAndDelete(id);
-      return parent.value;
+      return parent;
     } catch (error) {
       throw error;
     }

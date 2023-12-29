@@ -33,15 +33,15 @@ declare global {
       phone_number: string;
       password: string;
     }
-    interface IUpdateParentProfile {
-      first_name?: string;
-      last_name?: string;
-    }
     interface IUpdatePhoneNumber {
-      email: string;
       phone_number: string;
     }
     interface IUpdateParentPassword {
+      default_password: string;
+      password: string;
+      password_confirm: string;
+    }
+    interface IUpdatePassword {
       current_password: string;
       password: string;
       password_confirm: string;

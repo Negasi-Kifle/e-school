@@ -3,6 +3,7 @@ import Admin from "../apis/admin/dal";
 import AppError from "./app_error";
 import verifyToken from "./verify_token";
 import User from "../apis/users/dal";
+import Parent from "../apis/parents/dal";
 
 export default async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -13,6 +14,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
       "Teacher",
       "Assistant",
       "Teacher",
+      "Parent"
     ];
 
     // Token
@@ -78,8 +80,20 @@ export default async (req: Request, res: Response, next: NextFunction) => {
       req.user = admin;
     } else if (clientRoles.includes(decodedData.role)) {
       // Get client
-      const user = await User.getUserById(decodedData.id);
-      if (!user) return next(new AppError("User does not exist", 400));
+      let user : any= await User.getUserById(decodedData.id);
+      
+      //if client does not exist check he / she is a parent
+      if (!user) {
+        user = await Parent.getParent(decodedData.id);
+        if(user){
+
+          if(user.is_default_password && req.url !== "/defaultpassword"){
+            return next(new AppError("Please change your default password", 400));
+          }
+        }else{
+          return next(new AppError("User does not exist", 400));
+        }
+      }
 
       // Check the account status of the user
       if (user.status === "Inactive") {
