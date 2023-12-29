@@ -214,7 +214,7 @@ export const login: RequestHandler = async (req, res, next) => {
     const data = <UserRequests.ILogin>req.value;
 
     // Find user by phone number
-    const user = await Users.getByPhoneNum(data.phone_num);
+    const user = await Users.getActiveUserByPhoneNum(data.phone_num);
 
     // Check user exists and has provided valid credential
     if (!user || !user.comparePassword(data.password, user.password)) {
