@@ -447,3 +447,36 @@ export const resetOwnerPasssword: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
+
+// Update user status (user in tenant)
+export const updateUserStatus: RequestHandler = async (req, res, next) => {
+  try {
+    // Incoming data
+    const data = <UserRequests.IUpdateStatus>req.value;
+
+    // Check school exist
+    const school = await School.getSchool(data.tenant_id);
+    if (!school) return next(new AppError("School does not exist", 404));
+
+    // Check the logged in user has the previlege for this operation
+    const loggedInUser = <IUsersDoc>req.user;
+    checkOwnership(loggedInUser, school);
+
+    // Check user is not updating his/her own status
+    if (loggedInUser.id === data.user_id)
+      return next(new AppError("You can not update your own status", 400));
+
+    // Update user status
+    const user = await Users.updateUserStatus(data);
+    if (!user) return next(new AppError("User does not exist", 404));
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      message: "User status updated successfully",
+      data: { user },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
