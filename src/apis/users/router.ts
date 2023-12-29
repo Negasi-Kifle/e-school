@@ -117,9 +117,10 @@ router
   .delete(protect, auth("Owner", "Director"), deleteUserById);
 
 router.patch(
-  "/resetpswd/tenant/:tenantId/user/:userId",
+  "/resetpswd/tenant/:tenantId",
   protect,
   auth("Owner", "Director"),
+  validate(validatePswdResetAPI),
   resetUserPassword
 );
 

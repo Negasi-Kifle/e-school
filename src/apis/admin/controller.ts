@@ -521,3 +521,24 @@ export const deleteAllAdmins: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
+
+// Get admin profile
+export const getProfile: RequestHandler = async (req, res, next) => {
+  try {
+    // Logged in admin
+    const loggedInAdmin = <IAdminDoc>req.user;
+
+    // Fetch admin doc
+    const admin = await Admin.getAdmin(loggedInAdmin.id);
+    if (!admin)
+      return next(new AppError("Account not found. Please login again", 404));
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      data: { admin },
+    });
+  } catch (error) {
+    next(error);
+  }
+};

@@ -383,8 +383,11 @@ export const resetUserPassword: RequestHandler = async (req, res, next) => {
     const loggedInUser = <IUsersDoc>req.user;
     checkOwnership(loggedInUser, school);
 
+    // User id from the request body
+    const { user_id } = <UserRequests.IResetPassword>req.value;
+
     // Check user exists
-    const userInDb = await Users.getUserById(req.params.userId, school.id);
+    const userInDb = await Users.getUserById(user_id, school.id);
     if (!userInDb) return next(new AppError("User does not exist", 404));
 
     // Check user is not resetting his/her password

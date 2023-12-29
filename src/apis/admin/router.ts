@@ -17,6 +17,7 @@ import {
   deleteAdmin,
   deleteAllAdmins,
   getAllAdmins,
+  getProfile,
 } from "./controller";
 import {
   createFirstAdminValidation,
@@ -49,12 +50,14 @@ router
   .route("/firstaccount")
   .post(validator(createFirstAdminValidation), createAdminFirstAccount);
 
-router.patch(
-  "/profile",
-  protect,
-  auth("Super-admin", "Admin", "Call-center"),
-  updateAdminProfile
-);
+router
+  .route("/profile")
+  .patch(
+    protect,
+    auth("Super-admin", "Admin", "Call-center"),
+    updateAdminProfile
+  )
+  .get(protect, getProfile);
 
 router.patch(
   "/emailorphonenumber",
