@@ -34,7 +34,6 @@ export const createParent: RequestHandler = async (req, res, next) => {
         secure_url: response.secure_url,
         public_id: response.public_id,
       };
-      console.log(input.profile_img);
     }
 
     // Default password
@@ -66,6 +65,11 @@ export const parentLogin: RequestHandler = async (req, res, next) => {
 
     // Check if there is an parent
     const parent = await Parent.getParentByPhoneNumber(phone_number);
+
+    if(parent?.account_status === "Inactive"){
+      return next(new AppError("Your account has be deactivated please contact admin center.", 401));
+    }
+
     if (!parent || !parent.comparePassword(password, parent.password))
       return next(new AppError("Invalid phone number or password", 401));
 
@@ -75,7 +79,7 @@ export const parentLogin: RequestHandler = async (req, res, next) => {
     }
 
     // Generate token
-    const token = generateToken({ id: parent._id, role: "parent" });
+    const token = generateToken({ id: parent._id, role: "Parent" });
 
     // Respond
     res.status(200).json({
@@ -134,13 +138,14 @@ export const getParent: RequestHandler = async (req, res, next) => {
 export const updateDefaultPassword: RequestHandler = async (req, res, next) => {
   try {
     // Get body
-    const { current_password, password, password_confirm } = <
+    const { default_password, password } = <
       ParentRequest.IUpdateParentPassword
     >req.value;
 
-    // Check password
+    // check password
     const getParent = <IParentDoc>req.user;
-    if (!getParent.comparePassword(current_password, getParent.password))
+
+    if (!await Parent.comparePassword(default_password, getParent.password))
       return next(new AppError("Incorrect default password", 401));
 
     // Update password
@@ -160,52 +165,23 @@ export const updateDefaultPassword: RequestHandler = async (req, res, next) => {
   }
 };
 
-// Update parent profile
-export const updateParentProfile: RequestHandler = async (req, res, next) => {
-  try {
-    // Get body
-    const { first_name, last_name } = <ParentRequest.IUpdateParentProfile>(
-      req.body
-    );
-
-    // User
-    const user = <IParentDoc>req.user;
-
-    // Update
-    const parent = await Parent.updateParentProfile(user.id, {
-      first_name,
-      last_name,
-    });
-
-    // Respond
-    res.status(200).json({
-      status: "SUCCESS",
-      message: "You have updated your profile successfully",
-      data: {
-        parent,
-      },
-    });
-  } catch (error) {
-    next(error);
-  }
-};
 
 // Update phone or email
 export const updatePhoneNumber: RequestHandler = async (req, res, next) => {
   try {
     // Get body
-    const { phone_number, email } = <ParentRequest.IUpdatePhoneNumber>req.value;
+    const { phone_number } = <ParentRequest.IUpdatePhoneNumber>req.value;
 
     // user
     const user = <IParentDoc>req.user;
 
     // Check if the phone number is changed
     let phone_number_changed_at: boolean = false;
-    let message: string = "You have updated your profile successfully.";
+    let message: string = "You have updated your phone number successfully.";
     if (user.phone_number !== phone_number) {
       phone_number_changed_at = true;
       message =
-        "You have updated your profile successfully. Please login again.";
+        "You have updated your phone number successfully. Please login again.";
     }
 
     // Update
@@ -232,8 +208,8 @@ export const updatePhoneNumber: RequestHandler = async (req, res, next) => {
 export const updateParentPassword: RequestHandler = async (req, res, next) => {
   try {
     // Get body
-    const { current_password, password, password_confirm } = <
-      ParentRequest.IUpdateParentPassword
+    const { current_password, password } = <
+      ParentRequest.IUpdatePassword
     >req.value;
 
     // user
@@ -256,7 +232,7 @@ export const updateParentPassword: RequestHandler = async (req, res, next) => {
       },
     });
   } catch (error) {
-    next(error);
+    next(error); 
   }
 };
 
@@ -360,6 +336,7 @@ export const updateParentAccountStatus: RequestHandler = async (
 export const deleteParent: RequestHandler = async (req, res, next) => {
   try {
     const parent = await Parent.deleteParent(req.params.id);
+    console.log(parent)
     if (!parent)
       return next(
         new AppError("There is no parent with the specified ID", 404)
@@ -385,11 +362,13 @@ export const deleteAllParents: RequestHandler = async (req, res, next) => {
     if (configs.delete_key !== delete_key)
       return next(new AppError("Invalid delete key", 401));
 
+    await Parent.deleteAllParents();
+
     // Respond
     res.status(200).json({
       status: "SUCCESS",
       message:
-        "All parent accounts are deleted except for the first account created on the system",
+        "All parent accounts are deleted successfuly.",
     });
   } catch (error) {
     next(error);

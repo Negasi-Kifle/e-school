@@ -34,10 +34,10 @@ export default class PCOST {
       // const pcosts = await PCOSTModel.find();
       const apiFeature = new APIFeatures<IPCOSTDoc>(
         PCOSTModel.find()
-        // .populate({
-        //   path: "pco",
-        //   select: "payment_title payment_start_deadline payment_end_deadline",
-        // })
+        .populate({
+          path: "PCO",
+          select: "pmt_title start_date deadline",
+        })
         .populate({
           path: "student",
           select: "first_name last_name level",
@@ -62,10 +62,10 @@ export default class PCOST {
   static async getPCOST(id: string): Promise<IPCOSTDoc | null> {
     try {
       const pcost = await PCOSTModel.findById(id)
-      // .populate({
-      //   path: "pco",
-      //   select: "payment_title payment_start_deadline payment_end_deadline",
-      // })
+      .populate({
+        path: "PCO",
+        select: "pmt_title start_date deadline",
+      })
       .populate({
         path: "student",
         select: "first_name last_name level",
@@ -79,14 +79,14 @@ export default class PCOST {
     }
   }
 
-  // Get a pcost by pco id
+  // Get a pcost by PCO id
   static async getPCOSTByPCO(id: string): Promise<IPCOSTDoc | null> {
     try {
       const pcost = await PCOSTModel.findOne({ pco: id })
-      // .populate({
-      //   path: "pco",
-      //   select: "payment_title payment_start_deadline payment_end_deadline",
-      // });
+      .populate({
+        path: "PCO",
+        select: "pmt_title start_date deadline",
+      });
       return pcost;
     } catch (error) {
       throw error;

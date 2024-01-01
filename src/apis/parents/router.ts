@@ -7,7 +7,6 @@ import {
   getParent,
   updateDefaultPassword,
   createParent,
-  updateParentProfile,
   updatePhoneNumber,
   updateParentPassword,
   resetParentPassword,
@@ -22,10 +21,10 @@ import {
   updateDefaultPasswordValidation,
   createParentValidation,
   updatePhoneNumberValidation,
-  updateParentPasswordValidation,
   resetParentPasswordValidation,
   updateParentAccountStatusValidation,
   deleteAllParentsValidation,
+  updatePasswordValidation,
 } from "./validation";
 
 import validator from "../../utils/validator";
@@ -38,12 +37,10 @@ import { upload } from "../../utils/file_upload";
 router.post("/login", validator(parentLoginValidation), parentLogin);
 router.patch(
   "/defaultpassword",
-  bypass,
+  protect,
   validator(updateDefaultPasswordValidation),
   updateDefaultPassword
 );
-
-router.patch("/profile", protect, auth("Parent"), updateParentProfile);
 
 router.patch(
   "/phonenumber",
@@ -57,7 +54,7 @@ router.patch(
   "/password",
   protect,
   auth("Parent"),
-  validator(updateParentPasswordValidation),
+  validator(updatePasswordValidation),
   updateParentPassword
 );
 

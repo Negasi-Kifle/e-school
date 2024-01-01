@@ -61,6 +61,10 @@ const parentSchema: Schema = new Schema(
         type: String,
         required:[ true, "Image is required"]
       }
+    },
+    role: {
+      type: String,
+      default:"Parent"
     }
   },
   {
