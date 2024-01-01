@@ -35,6 +35,7 @@ export const createParent: RequestHandler = async (req, res, next) => {
         public_id: response.public_id,
       };
     }
+    
 
     // Default password
     const default_password = generate_password();
