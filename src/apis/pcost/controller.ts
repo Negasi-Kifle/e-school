@@ -37,11 +37,9 @@ export const updatePCOST: RequestHandler = async (req, res, next) => {
     if (!pcost) {
       return next(new AppError("PCOST does not exist", 400));
     }
-    
 
     // Update a pcost
     await PCOST.updatePCOST(data, req.params.id);
-    
 
     // Respond
     res.status(200).json({
@@ -52,7 +50,6 @@ export const updatePCOST: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
-
 
 export const deletePCOST: RequestHandler = async (req, res, next) => {
   try {
