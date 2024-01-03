@@ -120,7 +120,11 @@ export const adminLogin: RequestHandler = async (req, res, next) => {
     }
 
     // Generate token
-    const token = generateToken({ id: admin._id, role: admin.role });
+    const token = generateToken({
+      id: admin._id,
+      full_name: admin.first_name + " " + admin.last_name,
+      role: admin.role,
+    });
 
     // Respond
     res.status(200).json({

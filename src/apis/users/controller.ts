@@ -222,7 +222,16 @@ export const login: RequestHandler = async (req, res, next) => {
     }
 
     // Generate token
-    const token = generate_token({ id: user.id, role: user.role });
+    const token = generate_token({
+      id: user.id,
+      full_name: user.first_name + " " + user.last_name,
+      role: user.role,
+    });
+    console.log({
+      id: user.id,
+      full_name: user.first_name + " " + user.last_name,
+      role: user.role,
+    });
 
     // Set is_credential_changed field to false
     user.is_credential_changed = false;
