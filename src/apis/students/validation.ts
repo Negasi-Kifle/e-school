@@ -18,10 +18,29 @@ export const validateCreateAPI = Joi.object({
       "string.empty": "Level is required",
       "any.only": "Level must one of: KG, Elementary, High School, Preparatory",
     }),
-  grade: Joi.string().required().messages({
-    "any.required": "What grade is the student in?",
-    "string.empty": "What grade is the student in?",
-  }),
+  grade: Joi.string()
+    .required()
+    .valid(
+      "KG 1",
+      "KG 2",
+      "KG 3",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11",
+      "12"
+    )
+    .messages({
+      "any.required": "What grade is the student in?",
+      "string.empty": "What grade is the student in?",
+    }),
   sex: Joi.string().valid("Male", "Female").required().messages({
     "any.required": "What is the sex of the student?",
     "string.empty": "What is the sex of the student?",
