@@ -55,7 +55,7 @@ router
 router.patch(
   "/status/:id",
   protect,
-  auth("Super-admin", "Admin", "Call-center"),
+  auth("Super-admin", "Admin", "Call-center", "Owner"),
   validator(changeSchoolStatus),
   updateSchoolStatus
 );
