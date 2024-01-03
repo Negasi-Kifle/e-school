@@ -78,7 +78,7 @@ router
   .route("/")
   .post(
     protect,
-    auth("Super-admin"),
+    auth("Super-admin", "Owner", "Director", "Teacher"),
     upload.single("picture"),
     validator(createParentValidation),
     createParent
