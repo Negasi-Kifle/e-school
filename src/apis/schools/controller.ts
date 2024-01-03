@@ -166,6 +166,7 @@ export const getSchoolById: RequestHandler = async (req, res, next) => {
   }
 };
 
+// Get schools by owner - for trust admins
 export const getSchoolsByOwner: RequestHandler = async (req, res, next) => {
   try {
     // If logged in user is owner, check id in the request params matches with owner's id
@@ -184,6 +185,25 @@ export const getSchoolsByOwner: RequestHandler = async (req, res, next) => {
 
     // Get schools of an owner
     const schools = await School.getSchoolsByOwner(req.params.ownerId);
+
+    res.status(200).json({
+      status: "SUCCESS",
+      results: schools.length,
+      data: { schools },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Get schools by owner - for school owners
+export const getByOwnerForOwner: RequestHandler = async (req, res, next) => {
+  try {
+    // If logged in user is owner, check id in the request params matches with owner's id
+    const loggedInUser = <IUsersDoc>req.user;
+
+    // Get schools of an owner
+    const schools = await School.getSchoolsByOwner(loggedInUser.id);
 
     res.status(200).json({
       status: "SUCCESS",

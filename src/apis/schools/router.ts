@@ -12,6 +12,7 @@ import {
   updateSchool,
   updateSchoolStatus,
   createSchoolByOwner,
+  getByOwnerForOwner,
 } from "./controller";
 import {
   changeSchoolStatus,
@@ -48,7 +49,8 @@ router
     auth("Owner"),
     validator(createSchoolByOwnerValidation),
     createSchoolByOwner
-  );
+  )
+  .get(protect, auth("Owner"), getByOwnerForOwner);
 
 router.patch(
   "/status/:id",
