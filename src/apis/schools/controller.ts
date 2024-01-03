@@ -7,8 +7,8 @@ import IAdminDoc from "../admin/dto";
 import UserDAL from "../users/dal";
 import IUsersDoc from "../users/dto";
 
-// Create a school
-export const createSchool: RequestHandler = async (req, res, next) => {
+// Create a school by admins of trust
+export const createSchoolByAdmin: RequestHandler = async (req, res, next) => {
   try {
     // Get body
     const data = <SchoolRequest.ICreateSchoolInput>req.value;
@@ -16,6 +16,36 @@ export const createSchool: RequestHandler = async (req, res, next) => {
     // Check the owner exists
     const owner = await UserDAL.getOwnerById(data.owner);
     if (!owner) return next(new AppError("Unknown owner selected", 404));
+
+    //check school exists
+    const schoolInDb = await School.getSchoolByName(data.school_name);
+    if (schoolInDb) {
+      return next(new AppError("School already exists", 400));
+    }
+
+    // Create a school
+    const school = await School.createSchool(data);
+
+    // Respond
+    res.status(200).json({
+      status: "SUCCESS",
+      message: `School created successfuly!`,
+      data: { school },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Create a school by owner
+export const createSchoolByOwner: RequestHandler = async (req, res, next) => {
+  try {
+    // Get body
+    const data = <SchoolRequest.ICreateSchoolInput>req.value;
+
+    // Check the owner exists
+    const owner = <IUsersDoc>req.user;
+    data.owner = owner.id;
 
     //check school exists
     const schoolInDb = await School.getSchoolByName(data.school_name);

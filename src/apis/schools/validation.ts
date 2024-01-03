@@ -1,5 +1,6 @@
 import Joi from "joi";
 
+// Validate the API that's for creating a school by admins of trust
 export const createSchoolValidation = Joi.object({
   school_name: Joi.string().required().messages({
     "any.required": "What is the name of the school?",
@@ -14,6 +15,25 @@ export const createSchoolValidation = Joi.object({
   level: Joi.string()
     .required()
     .valid("KG", "Elementary", "High-School", "Preparatory", "All"),
+});
+
+// Validate the API that's for creating school by owner
+export const createSchoolByOwnerValidation = Joi.object({
+  school_name: Joi.string().required().messages({
+    "any.required": "What is the name of the school?",
+    "string.empty": "What is the name of the school?",
+  }),
+  school_address: Joi.string().required(),
+  license: Joi.string().required(),
+  level: Joi.array()
+    .items("KG", "Elementary", "High-School", "Preparatory", "All")
+    .min(1)
+    .required()
+    .messages({
+      "any.required": "Please select at least one level",
+      "array.includes":
+        "Level must be either of KG, Elementary, High School, Preparatory, All",
+    }),
 });
 
 export const updateSchoolValidation = Joi.object({
