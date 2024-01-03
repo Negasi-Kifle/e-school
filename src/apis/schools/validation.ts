@@ -12,9 +12,15 @@ export const createSchoolValidation = Joi.object({
     "any.required": "Who owns the school?",
     "string.empty": "Who owns the school?",
   }),
-  level: Joi.string()
+  level: Joi.array()
+    .items("KG", "Elementary", "High-School", "Preparatory", "All")
+    .min(1)
     .required()
-    .valid("KG", "Elementary", "High-School", "Preparatory", "All"),
+    .messages({
+      "any.required": "Please select at least one level",
+      "array.includes":
+        "Level must be either of KG, Elementary, High School, Preparatory, All",
+    }),
 });
 
 // Validate the API that's for creating school by owner
