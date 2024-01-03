@@ -3,7 +3,7 @@ import { Router } from "express";
 const router = Router();
 
 import {
-  createSchool,
+  createSchoolByAdmin,
   deleteAllSchools,
   deleteSchool,
   getSchoolById,
@@ -11,9 +11,11 @@ import {
   getSchools,
   updateSchool,
   updateSchoolStatus,
+  createSchoolByOwner,
 } from "./controller";
 import {
   changeSchoolStatus,
+  createSchoolByOwnerValidation,
   createSchoolValidation,
   deleteAllSchoolsValidation,
   updateSchoolValidation,
@@ -29,7 +31,7 @@ router
     protect,
     auth("Super-admin", "Admin", "Call-center", "Owner"),
     validator(createSchoolValidation),
-    createSchool
+    createSchoolByAdmin
   )
   .get(protect, auth("Super-admin", "Admin", "Call-center"), getSchools)
   .delete(
@@ -37,6 +39,15 @@ router
     auth("Super-admin"),
     validator(deleteAllSchoolsValidation),
     deleteAllSchools
+  );
+
+router
+  .route("/owner")
+  .post(
+    protect,
+    auth("Owner"),
+    validator(createSchoolByOwnerValidation),
+    createSchoolByOwner
   );
 
 router.patch(
