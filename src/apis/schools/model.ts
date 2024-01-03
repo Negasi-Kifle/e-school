@@ -20,14 +20,14 @@ const schoolSchema: Schema = new Schema(
       type: String,
       required: [true, "License is required"]
     },
-    level: {
+    level: [{
       type: String,
       required: [true, "School Level is required"],
       enum: {
         values: ["KG", "Elementary", "High-School", "Preparatory", "All"],
         message: "Invalid school level",
       },
-    },
+    }],
     status: {
       type: String,
       required: [true, "Status is required"],
