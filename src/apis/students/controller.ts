@@ -23,8 +23,9 @@ export const createStudent: RequestHandler = async (req, res, next) => {
     }
 
     // Check parent exists
-    const parent = await Parent.getParent(data.parent);
+    const parent = await Parent.getParentByPhoneNumber(data.parent_phone_num);
     if (!parent) return next(new AppError("Unknown parent selected", 404));
+    data.parent = parent.id; // Add id of parent on data
 
     // Check school exists
     const school = await School.getSchool(data.tenant_id);

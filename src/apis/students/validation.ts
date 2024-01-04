@@ -64,9 +64,9 @@ export const validateCreateAPI = Joi.object({
     "string.empty": "What is the sex of the student?",
     "any.only": "Sex must either Male or Female",
   }),
-  parent: Joi.string().required().messages({
-    "any.required": "Who raises the student?",
-    "string.empty": "Who raises the student?",
+  parent_phone_num: Joi.string().required().messages({
+    "any.required": "Phone number of parent is required",
+    "string.empty": "Phone number of parent is required",
   }),
   parent_relation: Joi.string().required().messages({
     "any.required":

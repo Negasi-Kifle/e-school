@@ -33,6 +33,7 @@ declare global {
       birth_date: Date;
       sex: "Male" | "Female";
       parent: string;
+      parent_phone_num: string;
       parent_relation: string;
       tenant_id: string;
       prof_img: IProfileImg;

@@ -52,7 +52,7 @@ const studentsSchema = new Schema(
         message: "Sex must be Male or Female",
       },
     },
-    parent: String,
+    parent: { type: Schema.ObjectId, ref: "Parent" },
     parent_relation: String,
     tenant_id: {
       type: Schema.ObjectId,
