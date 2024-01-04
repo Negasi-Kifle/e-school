@@ -97,7 +97,7 @@ router
 
 router
   .route("/:id")
-  .get(protect, auth("Super-admin", "Parent", "Call-center"), getParent)
+  .get(protect, auth("Super-admin", "Parent", "Owner", "Call-center"), getParent)
   .delete(protect, auth("Super-admin"), deleteParent);
 
 router.get(
