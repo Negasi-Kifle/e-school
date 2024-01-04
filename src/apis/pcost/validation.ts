@@ -10,15 +10,15 @@ export const createPCOSTValidation = Joi.object({
   parent: Joi.string().required().messages({
     "any.required": "Select the related parent",
   }),
-  is_paid: Joi.boolean().required().messages({
-    "any.required": "Select the related is paid",
+  is_paid: Joi.boolean().messages({
+    "boolean.base": "The field is_paid must be boolean",
   }),
-  is_before_deadline: Joi.boolean().required().messages({
-    "any.required": "Select the related is before deadline",
+  is_before_deadline: Joi.boolean().messages({
+    "boolean.base": "The field is_before_deadline must be boolean",
   }),
-  paid_amount: Joi.number().required().messages({
-    "any.required": "Select the related is paid amount",
-  })
+  paid_amount: Joi.number().min(0).messages({
+    "number.min": "Paid amount must be greater than or equal to zero",
+  }),
 });
 
 export const updatePCOSTValidation = Joi.object({

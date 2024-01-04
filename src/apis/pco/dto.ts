@@ -28,8 +28,8 @@ declare global {
       deadline: Date;
       amount: Number;
       penality: number;
-      levels: string;
-      grades: string;
+      levels: string[];
+      grades: string[];
       tenant_id: string;
       pmt_package: string;
       pmt_package_deadline: Date;
@@ -47,6 +47,12 @@ declare global {
       tenant_id: string;
       pmt_package: string;
       pmt_package_deadline: Date;
+    }
+    interface ICreatePcosts {
+      levels: string[];
+      grades: string[];
+      pco: string;
+      tenant_id: string;
     }
   }
 }

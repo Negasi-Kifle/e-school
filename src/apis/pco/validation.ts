@@ -29,6 +29,7 @@ export const validateCreateAPI = Joi.object({
     "number.min": "Penality must be greater than zero",
   }),
   levels: Joi.array()
+    .unique()
     .min(1)
     .items("KG", "Elementary", "High School", "Preparatory", "All")
     .required()
@@ -37,11 +38,36 @@ export const validateCreateAPI = Joi.object({
       "array.min": "Please select at leas one level",
       "array.includes":
         "Level must be either of KG, Elementary, High School, Preparatory, All",
+      "array.unique": "Level can not be selected more than once",
     }),
-  grades: Joi.array().required().min(1).messages({
-    "any.required": "Grade of students is required",
-    "array.min": "Grade of students is required",
-  }),
+  grades: Joi.array()
+    .unique()
+    .min(1)
+    .items(
+      "KG 1",
+      "KG 2",
+      "KG 3",
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+      "6",
+      "7",
+      "8",
+      "9",
+      "10",
+      "11",
+      "12",
+      "All"
+    )
+    .required()
+    .messages({
+      "any.required": "Grade of students is required",
+      "array.min": "Grade of students is required",
+      "array.unique": "Grade can not be selected more than once",
+      "array.includes": "Grade must from KG 1 up to 12",
+    }),
   tenant_id: Joi.string().required().messages({
     "any.required": "School is required",
     "string.empty": "School is required",

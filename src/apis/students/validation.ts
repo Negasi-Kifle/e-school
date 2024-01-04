@@ -16,30 +16,48 @@ export const validateCreateAPI = Joi.object({
     .messages({
       "any.required": "Level is required",
       "string.empty": "Level is required",
-      "any.only": "Level must one of: KG, Elementary, High School, Preparatory",
+      "any.only":
+        "Level must be one of: KG, Elementary, High School, Preparatory",
     }),
   grade: Joi.string()
+    .when("level", {
+      is: "KG",
+      then: Joi.string().valid("KG 1", "KG 2", "KG 3").required().messages({
+        "any.required": "What grade is the student in?",
+        "string.empty": "What grade is the student in?",
+        "any.only": "Grade must be one of: KG 1, KG 2, KG 3",
+      }),
+    })
+    .when("level", {
+      is: "Elementary",
+      then: Joi.string()
+        .valid("1", "2", "3", "4", "5", "6", "7", "8")
+        .required()
+        .messages({
+          "any.required": "What grade is the student in?",
+          "string.empty": "What grade is the student in?",
+          "any.only": "Grade must be from 1 to 8 for Elementary level",
+        }),
+    })
+    .when("level", {
+      is: "High School",
+      then: Joi.string().valid("9", "10").required().messages({
+        "any.required": "What grade is the student in?",
+        "string.empty": "What grade is the student in?",
+        "any.only": "Grade must be either 9 or 10 for High School level",
+      }),
+    })
+    .when("level", {
+      is: "Preparatory",
+      then: Joi.string().valid("11", "12").required().messages({
+        "any.required": "What grade is the student in?",
+        "string.empty": "What grade is the student in?",
+        "any.only": "Grade must be either 11 or 12 for Preparatory level",
+      }),
+    })
     .required()
-    .valid(
-      "KG 1",
-      "KG 2",
-      "KG 3",
-      "1",
-      "2",
-      "3",
-      "4",
-      "5",
-      "6",
-      "7",
-      "8",
-      "9",
-      "10",
-      "11",
-      "12"
-    )
     .messages({
-      "any.required": "What grade is the student in?",
-      "string.empty": "What grade is the student in?",
+      "any.required": "Grade is required",
     }),
   sex: Joi.string().valid("Male", "Female").required().messages({
     "any.required": "What is the sex of the student?",

@@ -48,7 +48,7 @@ const studentsSchema = new Schema(
       type: String,
       required: [true, "Sex is required"],
       enum: {
-        values: ["Male", "Femal"],
+        values: ["Male", "Female"],
         message: "Sex must be Male or Female",
       },
     },

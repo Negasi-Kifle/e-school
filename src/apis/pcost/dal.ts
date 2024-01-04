@@ -34,17 +34,18 @@ export default class PCOST {
       // const pcosts = await PCOSTModel.find();
       const apiFeature = new APIFeatures<IPCOSTDoc>(
         PCOSTModel.find()
-        .populate({
-          path: "PCO",
-          select: "pmt_title start_date deadline",
-        })
-        .populate({
-          path: "student",
-          select: "first_name last_name level",
-        }).populate({
-          path: "parent",
-          select: "first_name last_name phone_number",
-        }),
+          .populate({
+            path: "pco",
+            select: "pmt_title start_date deadline penality",
+          })
+          .populate({
+            path: "student",
+            select: "first_name last_name level",
+          })
+          .populate({
+            path: "parent",
+            select: "first_name last_name phone_number",
+          }),
         query
       )
         .filter()
@@ -62,17 +63,18 @@ export default class PCOST {
   static async getPCOST(id: string): Promise<IPCOSTDoc | null> {
     try {
       const pcost = await PCOSTModel.findById(id)
-      .populate({
-        path: "PCO",
-        select: "pmt_title start_date deadline",
-      })
-      .populate({
-        path: "student",
-        select: "first_name last_name level",
-      }).populate({
-        path: "parent",
-        select: "first_name last_name phone_number",
-      });
+        .populate({
+          path: "PCO",
+          select: "pmt_title start_date deadline",
+        })
+        .populate({
+          path: "student",
+          select: "first_name last_name level",
+        })
+        .populate({
+          path: "parent",
+          select: "first_name last_name phone_number",
+        });
       return pcost;
     } catch (error) {
       throw error;
@@ -82,8 +84,7 @@ export default class PCOST {
   // Get a pcost by PCO id
   static async getPCOSTByPCO(id: string): Promise<IPCOSTDoc | null> {
     try {
-      const pcost = await PCOSTModel.findOne({ pco: id })
-      .populate({
+      const pcost = await PCOSTModel.findOne({ pco: id }).populate({
         path: "PCO",
         select: "pmt_title start_date deadline",
       });
