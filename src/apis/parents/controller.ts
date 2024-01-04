@@ -104,6 +104,25 @@ export const parentLogin: RequestHandler = async (req, res, next) => {
   }
 };
 
+// Get parent by phone number
+export const getByPhoneNumber: RequestHandler = async (req, res, next) => {
+  try {
+    const { phone_num } = req.query; // Phone number from request query
+
+    // Get parent by phone number
+    const parent = await Parent.getParentByPhoneNumber(phone_num as string);
+    if (!parent) return next(new AppError("Parent not found", 404));
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      data: { parent },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // Get all parents
 export const getAllParents: RequestHandler = async (req, res, next) => {
   try {

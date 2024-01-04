@@ -15,6 +15,7 @@ import {
   deleteAllParents,
   getAllParents,
   getParentChildren,
+  getByPhoneNumber,
 } from "./controller";
 import {
   parentLoginValidation,
@@ -42,13 +43,15 @@ router.patch(
   updateDefaultPassword
 );
 
-router.patch(
-  "/phonenumber",
-  protect,
-  auth("Parent"),
-  validator(updatePhoneNumberValidation),
-  updatePhoneNumber
-);
+router
+  .route("/phonenumber")
+  .patch(
+    protect,
+    auth("Parent"),
+    validator(updatePhoneNumberValidation),
+    updatePhoneNumber
+  )
+  .get(protect, getByPhoneNumber);
 
 router.patch(
   "/password",
@@ -97,7 +100,11 @@ router
 
 router
   .route("/:id")
-  .get(protect, auth("Super-admin", "Parent", "Owner", "Call-center"), getParent)
+  .get(
+    protect,
+    auth("Super-admin", "Parent", "Owner", "Call-center"),
+    getParent
+  )
   .delete(protect, auth("Super-admin"), deleteParent);
 
 router.get(
