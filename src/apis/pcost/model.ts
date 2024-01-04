@@ -22,14 +22,16 @@ const pcostSchema = new Schema(
     is_paid: {
       type: Boolean,
       default: false,
-      required: [true, "Is Paid is required"],
     },
     is_before_deadline: {
       type: Boolean,
       default: false,
-      required: [true, "Is Before Deadline is required"],
     },
-    paid_amount: { type: Number, required: [true, "Paid Amount is requried"] },
+    paid_amount: {
+      type: Number,
+      default: 0,
+      min: [0, "Paid amount must be greater than ot equal to zero"],
+    },
   },
   {
     writeConcern: {

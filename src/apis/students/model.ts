@@ -15,12 +15,40 @@ const studentsSchema = new Schema(
     level: {
       type: String,
       required: [true, "Education level is required"],
+      enum: {
+        values: ["KG", "Elementary", "High School", "Preparatory"],
+        message:
+          "Level must be one of: KG, Elementary, High School, Preparatory",
+      },
+    },
+    grade: {
+      type: String,
+      required: [true, "What grade is the student in?"],
+      enum: {
+        values: [
+          "KG 1",
+          "KG 2",
+          "KG 3",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12",
+        ],
+      },
     },
     sex: {
       type: String,
       required: [true, "Sex is required"],
       enum: {
-        values: ["Male", "Femal"],
+        values: ["Male", "Female"],
         message: "Sex must be Male or Female",
       },
     },

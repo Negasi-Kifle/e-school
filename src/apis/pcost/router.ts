@@ -31,14 +31,13 @@ router
     validator(createPCOSTValidation),
     createPCOST
   )
-  .get(protect, auth("Super-admin", "Admin", "Call-center"), getPCOSTs)
+  .get(protect, auth("Super-admin", "Admin", "Call-center", "Owner"), getPCOSTs)
   .delete(
     protect,
     auth("Super-admin"),
     validator(deleteAllPCOSTsValidation),
     deleteAllPCOSTs
   );
-
 
 router.get(
   "/pco/:id",
@@ -60,9 +59,6 @@ router.get(
   auth("Super-admin", "Admin", "Call-center", "Owner"),
   getPCOSTByParent
 );
-
-
-
 
 router
   .route("/:id")

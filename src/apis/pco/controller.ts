@@ -5,9 +5,11 @@ import AppError from "../../utils/app_error";
 import IUsersDoc from "../users/dto";
 import checkOwnership from "../students/utils/check_ownership";
 import slugifer from "../../utils/slugfier";
+import createPcosts from "./utils/create_pcosts";
 
 // Create PCO
 export const createPCO: RequestHandler = async (req, res, next) => {
+  let pcoId = "PcoId";
   try {
     // Check school exists
     const school = await School.getSchool(req.params.tenantId);
@@ -23,6 +25,17 @@ export const createPCO: RequestHandler = async (req, res, next) => {
 
     // Create PCO
     const pco = await PCO.createPCO(data);
+    pcoId = pco.id;
+
+    const pcostData = <PCORequests.ICreatePcosts>{
+      levels: data.levels,
+      grades: data.grades,
+      tenant_id: data.tenant_id,
+      pco: pco.id,
+    };
+
+    // Create all PCOSts for the selected levels and grades
+    await createPcosts(pcostData);
 
     // Response
     res.status(200).json({
@@ -31,6 +44,7 @@ export const createPCO: RequestHandler = async (req, res, next) => {
       data: { pco },
     });
   } catch (error) {
+    if (pcoId !== "PcoId") await PCO.deleteById(pcoId);
     next(error);
   }
 };
