@@ -246,7 +246,7 @@ export default class Admin {
   // Delete all admins
   static async deleteAllAdmins() {
     try {
-      await AdminModel.deleteMany({ $not: { first_account: true } });
+      await AdminModel.deleteMany({ first_account: { $ne: true } });
     } catch (error) {
       throw error;
     }
