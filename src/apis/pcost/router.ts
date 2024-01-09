@@ -42,21 +42,21 @@ router
 router.get(
   "/pco/:id",
   protect,
-  auth("Super-admin", "Admin", "Call-center", "Owner"),
+  auth("Super-admin", "Admin", "Call-center", "Owner", "Parent"),
   getPCOSTByPCO
 );
 
 router.get(
   "/student/:id",
   protect,
-  auth("Super-admin", "Admin", "Call-center", "Owner"),
+  auth("Super-admin", "Admin", "Call-center", "Owner", "Parent"),
   getPCOSTByPCOSTtudent
 );
 
 router.get(
   "/parent/:id",
   protect,
-  auth("Super-admin", "Admin", "Call-center", "Owner"),
+  auth("Super-admin", "Admin", "Call-center", "Owner", "Parent"),
   getPCOSTByParent
 );
 
