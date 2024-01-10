@@ -1,13 +1,26 @@
-import Joi from "joi";
-
+import Joi, { string } from "joi";
 
 export const createParentValidation = Joi.object({
-  first_name: Joi.string().required(),
-  last_name: Joi.string().required(),
-  address: Joi.string().required(),
-  phone_number: Joi.string().required(),
-  password: Joi.string().required(),
-  password_confirm: Joi.string().required().equal(Joi.ref('password')),
+  first_name: Joi.string().required().messages({
+    "any.required": "First name is required",
+    "string.empty": "First name is required",
+    "string.base": "First name must be string",
+  }),
+  last_name: Joi.string().required().messages({
+    "any.required": "Last name is required",
+    "string.empty": "Last name is required",
+    "string.base": "Last name must be string",
+  }),
+  address: Joi.string().required().messages({
+    "any.required": "Address is required",
+    "string.empty": "Address is required",
+    "string.base": "Address must be string",
+  }),
+  phone_number: Joi.string().required().messages({
+    "any.required": "Phone number is required",
+    "string.empty": "Phone number is required",
+    "string.base": "Phone number must be string",
+  }),
 });
 
 export const parentLoginValidation = Joi.object({
@@ -18,7 +31,7 @@ export const parentLoginValidation = Joi.object({
 export const updateDefaultPasswordValidation = Joi.object({
   default_password: Joi.string().required(),
   password: Joi.string().required(),
-  password_confirm: Joi.string().required().equal(Joi.ref('password')),
+  password_confirm: Joi.string().required().equal(Joi.ref("password")),
 });
 
 export const updatePhoneNumberValidation = Joi.object({
@@ -28,7 +41,7 @@ export const updatePhoneNumberValidation = Joi.object({
 export const updatePasswordValidation = Joi.object({
   current_password: Joi.string().required(),
   password: Joi.string().required(),
-  password_confirm: Joi.string().required().equal(Joi.ref('password')),
+  password_confirm: Joi.string().required().equal(Joi.ref("password")),
 });
 
 export const resetParentPasswordValidation = Joi.object({

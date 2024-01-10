@@ -515,6 +515,9 @@ export const deleteAllAdmins: RequestHandler = async (req, res, next) => {
         )
       );
 
+    // Delete all admins
+    await Admin.deleteAllAdmins();
+
     // Respond
     res.status(200).json({
       status: "SUCCESS",
