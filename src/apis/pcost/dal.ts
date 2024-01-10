@@ -126,9 +126,9 @@ export default class PCOST {
   }
 
   // Get a pcost by student id
-  static async getPCOSTByParent(id: string): Promise<IPCOSTDoc | null> {
+  static async getPCOSTByParent(id: string): Promise<IPCOSTDoc[]> {
     try {
-      const pcost = await PCOSTModel.findOne({ parent: id })
+      const pcost = await PCOSTModel.find({ parent: id })
         .populate({
           path: "pco",
           select: "pmt_title start_date deadline amount penality",
