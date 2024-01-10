@@ -36,7 +36,7 @@ export default class PCOST {
         PCOSTModel.find()
           .populate({
             path: "pco",
-            select: "pmt_title start_date deadline penality",
+            select: "pmt_title start_date deadline amount penality penality",
           })
           .populate({
             path: "student",
@@ -64,8 +64,8 @@ export default class PCOST {
     try {
       const pcost = await PCOSTModel.findById(id)
         .populate({
-          path: "PCO",
-          select: "pmt_title start_date deadline",
+          path: "pco",
+          select: "pmt_title start_date deadline amount penality",
         })
         .populate({
           path: "student",
@@ -84,10 +84,19 @@ export default class PCOST {
   // Get a pcost by PCO id
   static async getPCOSTByPCO(id: string): Promise<IPCOSTDoc | null> {
     try {
-      const pcost = await PCOSTModel.findOne({ pco: id }).populate({
-        path: "PCO",
-        select: "pmt_title start_date deadline",
-      });
+      const pcost = await PCOSTModel.findOne({ pco: id })
+        .populate({
+          path: "pco",
+          select: "pmt_title start_date deadline amount penality",
+        })
+        .populate({
+          path: "student",
+          select: "first_name last_name level",
+        })
+        .populate({
+          path: "parent",
+          select: "first_name last_name phone_number",
+        });
       return pcost;
     } catch (error) {
       throw error;
@@ -97,10 +106,19 @@ export default class PCOST {
   // Get a pcost by student id
   static async getPCOSTByStudent(id: string): Promise<IPCOSTDoc | null> {
     try {
-      const pcost = await PCOSTModel.findOne({ student: id }).populate({
-        path: "student",
-        select: "first_name last_name phone_number",
-      });
+      const pcost = await PCOSTModel.findOne({ student: id })
+        .populate({
+          path: "pco",
+          select: "pmt_title start_date deadline amount penality",
+        })
+        .populate({
+          path: "student",
+          select: "first_name last_name level",
+        })
+        .populate({
+          path: "parent",
+          select: "first_name last_name phone_number",
+        });
       return pcost;
     } catch (error) {
       throw error;
@@ -110,10 +128,19 @@ export default class PCOST {
   // Get a pcost by student id
   static async getPCOSTByParent(id: string): Promise<IPCOSTDoc | null> {
     try {
-      const pcost = await PCOSTModel.findOne({ parent: id }).populate({
-        path: "parent",
-        select: "first_name last_name phone_number",
-      });
+      const pcost = await PCOSTModel.findOne({ parent: id })
+        .populate({
+          path: "pco",
+          select: "pmt_title start_date deadline amount penality",
+        })
+        .populate({
+          path: "student",
+          select: "first_name last_name level",
+        })
+        .populate({
+          path: "parent",
+          select: "first_name last_name phone_number",
+        });
       return pcost;
     } catch (error) {
       throw error;
