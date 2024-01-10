@@ -32,6 +32,7 @@ const pcoSchema = new Schema(
     },
     penality: {
       type: Number,
+      default: 0,
       min: [0, "Penality can not be less than zero"],
     },
     levels: [

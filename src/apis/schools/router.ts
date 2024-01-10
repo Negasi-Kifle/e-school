@@ -69,7 +69,11 @@ router.get(
 
 router
   .route("/:id")
-  .get(protect, auth("Super-admin", "Admin", "Call-center"), getSchoolById)
+  .get(
+    protect,
+    auth("Super-admin", "Admin", "Call-center", "Owner"),
+    getSchoolById
+  )
   .patch(
     protect,
     auth("Super-admin", "Admin", "Call-center"),
