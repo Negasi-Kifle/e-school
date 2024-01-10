@@ -136,11 +136,12 @@ export const getPCOSTByPCOSTtudent: RequestHandler = async (req, res, next) => {
 export const getPCOSTByParent: RequestHandler = async (req, res, next) => {
   try {
     const id = req.params.id;
-    const pcost = await PCOST.getPCOSTByParent(id);
+    const pcosts = await PCOST.getPCOSTByParent(id);
 
     res.status(200).json({
       status: "SUCCESS",
-      data: { pcost },
+      results: pcosts.length,
+      data: { pcosts },
     });
   } catch (err) {
     next(err);
