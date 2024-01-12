@@ -43,3 +43,21 @@ export const updateParentAccountStatusValidation = Joi.object({
 export const deleteAllParentsValidation = Joi.object({
   delete_key: Joi.string().required(),
 });
+
+// Validate forgot password
+export const validateForgotPswd = Joi.object({
+  email: Joi.string().email().required().messages({
+    "any.required": "Please provide email address",
+  }),
+});
+
+
+// Validate otp verification
+export const validateOTPVerifier = Joi.object({
+  email: Joi.string().email().required().messages({
+    "any.required": "Email is required",
+  }),
+  otp: Joi.string().required().messages({
+    "any.required": "OTP is required",
+  }),
+});

@@ -1,5 +1,6 @@
 import { config } from "dotenv";
 import path from "path";
+import SMTPConnection from "nodemailer/lib/smtp-connection";
 
 config({ path: path.join(process.cwd(), "./src/config.env"), debug: true });
 
@@ -29,6 +30,7 @@ export default {
     secret: <string>process.env.JWT_SECRET,
     expires_in: <string>process.env.JWT_EXPIRES_IN,
   },
+  ui_url:process.env.URL as string,
   delete_key: process.env.DELETE_KEY,
   api_key: process.env.API_KEY,
   cloudinary: {
@@ -37,4 +39,12 @@ export default {
     api_secret: <string>process.env.CLOUDINARY_API_SECRET,
   },
   chapa,
+  smtp:{
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
+  },
+  smtp_auth: {
+    email: process.env.SMTP_EMAIL,
+    pswd: process.env.SMTP_PASSWORD,
+  },
 };

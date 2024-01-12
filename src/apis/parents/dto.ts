@@ -8,6 +8,9 @@ export default interface IParentDoc extends Document {
   is_default_password: boolean;
   password: string;
   password_changed_at: Date;
+  is_credential_changed: Boolean;
+  otp: string;
+  otp_expiry: Date;
   phone_number_changed_at: Boolean;
   account_status: string;
   createdAt: Date;
@@ -55,6 +58,19 @@ declare global {
     }
     interface IDeleteAllParents {
       delete_key: string;
+    }
+    interface IForgotPswd {
+      phone_number: string;
+    }
+
+    interface IUpdateOTP {
+      otp: string;
+      otp_expiry: Date;
+    }
+    interface IResetPswd {
+      phone_number: string;
+      pin: string;
+      pin_confirm: string;
     }
   }
 }

@@ -106,15 +106,13 @@ export default class StudentDAL {
     }
   }
 
-  // Students by level and grade
-  static async getByLevelAndGradeInTenant(
-    level: string,
+  // Students by grade
+  static async getByGradeInTenant(
     grade: string,
     tenant_id: string
   ): Promise<IStudentDoc[]> {
     try {
       const students = await Student.find({
-        level,
         grade,
         tenant_id,
       });

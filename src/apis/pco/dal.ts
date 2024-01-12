@@ -25,7 +25,7 @@ export default class PCODAL {
       const apiFeatures = new APIFeatures(
         PCO.find({ tenant_id }).populate({
           path: "tenant_id",
-          select: "school_name school_address level",
+          select: "school_name school_address",
         }),
         query
       )
@@ -47,7 +47,7 @@ export default class PCODAL {
       const apiFeatures = new APIFeatures(
         PCO.find().populate({
           path: "tenant_id",
-          select: "school_name school_address level",
+          select: "school_name school_address",
         }),
         query
       )
@@ -72,7 +72,7 @@ export default class PCODAL {
       // Check school exists
       const school = await PCO.findOne({ _id, tenant_id }).populate({
         path: "tenant_id",
-        select: "school_name school_address level",
+        select: "school_name school_address",
       });
       return school;
     } catch (error) {

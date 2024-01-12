@@ -40,6 +40,10 @@ const parentSchema: Schema = new Schema(
       minlength: [8, "Password can not be less than 8 characters"],
     },
     password_changed_at: Date,
+    is_credential_changed: {
+      type: Boolean,
+      default: false,
+    },
     phone_number_changed_at: {
       type: Boolean,
       default: false,
@@ -65,7 +69,9 @@ const parentSchema: Schema = new Schema(
     role: {
       type: String,
       default:"Parent"
-    }
+    },
+    otp: String,
+    otp_expiry: Date,
   },
   {
     writeConcern: {

@@ -28,18 +28,6 @@ export const validateCreateAPI = Joi.object({
   penality: Joi.number().min(1).messages({
     "number.min": "Penality must be greater than zero",
   }),
-  levels: Joi.array()
-    .unique()
-    .min(1)
-    .items("KG", "Elementary", "High School", "Preparatory", "All")
-    .required()
-    .messages({
-      "any.required": "Level of students expected to pay is required",
-      "array.min": "Please select at leas one level",
-      "array.includes":
-        "Level must be either of KG, Elementary, High School, Preparatory, All",
-      "array.unique": "Level can not be selected more than once",
-    }),
   grades: Joi.array()
     .unique()
     .min(1)
