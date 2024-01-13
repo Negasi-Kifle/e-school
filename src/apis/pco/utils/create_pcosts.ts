@@ -14,13 +14,10 @@ export default async function createPcosts(
   try {
     // Check levels and grades
     if (
-      data.levels.length === 1 &&
-      data.levels[0] !== "All" &&
       data.grades.length >= 1
     ) {
-      // Get all students for the selected levels and grades
-      const students = await oneLevelAndManyGrades(
-        data.levels[0],
+      // Get all students for the selected grades
+      const students = await manyGrades(
         data.grades,
         data.tenant_id
       );
@@ -28,32 +25,32 @@ export default async function createPcosts(
       // Create all PCOSts for the students
       await createAllPcosts(students, data.pco);
     } else if (
-      data.levels.length === 1 &&
-      data.levels[0] === "All" &&
       data.grades.length === 1 &&
       data.grades[0] === "All"
     ) {
-      // Get all students for the selected levels and grades
-      const students = await allLevelsAndAllGrades(data.tenant_id);
+      // Get all students for the selected grades
+      const students = await allGrades(data.tenant_id);
 
       // Create all PCOSts for the students
       await createAllPcosts(students, data.pco);
-    } else if (
-      data.levels.length >= 1 &&
-      !data.levels.includes("All") &&
-      data.grades.length >= 1 &&
-      !data.grades.includes("All")
-    ) {
-      // Get all students for the selected levels and grades
-      const students = await multiLevelsAndMultiGrades(
-        data.levels,
-        data.grades,
-        data.tenant_id
-      );
+    } 
+    // else if (
+    //   data.levels.length >= 1 &&
+    //   !data.levels.includes("All") &&
+    //   data.grades.length >= 1 &&
+    //   !data.grades.includes("All")
+    // ) {
+    //   // Get all students for the selected levels and grades
+    //   const students = await multiLevelsAndMultiGrades(
+    //     data.levels,
+    //     data.grades,
+    //     data.tenant_id
+    //   );
 
-      // Create all PCOSts for the students
-      await createAllPcosts(students, data.pco);
-    } else {
+    //   // Create all PCOSts for the students
+    //   await createAllPcosts(students, data.pco);
+    // }
+     else {
       throw new AppError("Unable to create PCOSts", 400);
     }
   } catch (error) {
@@ -61,9 +58,8 @@ export default async function createPcosts(
   }
 }
 
-// Get students when one level and multiple grades are selected
-export async function oneLevelAndManyGrades(
-  level: string,
+// Get students when multiple grades are selected
+export async function manyGrades(
   grades: string[],
   tenant_id: string
 ): Promise<IStudentDoc[]> {
@@ -71,13 +67,10 @@ export async function oneLevelAndManyGrades(
     // Store students temporarily
     const students: IStudentDoc[] = [];
 
-    // Get grades by level
-    grades = getGradesByLevel(level);
 
-    // Loop through each grade and fetch students in each level and grade
+    // Loop through each grade and fetch students in each grade
     for (let grade of grades) {
-      const student = await StudentDAL.getByLevelAndGradeInTenant(
-        level,
+      const student = await StudentDAL.getByGradeInTenant(
         grade,
         tenant_id
       );
@@ -91,7 +84,7 @@ export async function oneLevelAndManyGrades(
 }
 
 // Get students when all levels and grades are selected
-export async function allLevelsAndAllGrades(
+export async function allGrades(
   tenant_id: string
 ): Promise<IStudentDoc[]> {
   try {
@@ -118,32 +111,32 @@ export async function allLevelsAndAllGrades(
 }
 
 // Get students when multiple levels and multiple grades are selected
-export async function multiLevelsAndMultiGrades(
-  levels: string[],
-  grades: string[],
-  tenant_id: string
-): Promise<IStudentDoc[]> {
-  try {
-    // Temporary array to store students
-    const students: IStudentDoc[] = [];
+// export async function multiLevelsAndMultiGrades(
+//   levels: string[],
+//   grades: string[],
+//   tenant_id: string
+// ): Promise<IStudentDoc[]> {
+//   try {
+//     // Temporary array to store students
+//     const students: IStudentDoc[] = [];
 
-    // Fetch students in each level and grade
-    for (let level of levels) {
-      for (let grade of grades) {
-        const studentsInDb = await StudentDAL.getByLevelAndGradeInTenant(
-          level,
-          grade,
-          tenant_id
-        );
-        students.push(...studentsInDb);
-      }
-    }
+//     // Fetch students in each level and grade
+//     for (let level of levels) {
+//       for (let grade of grades) {
+//         const studentsInDb = await StudentDAL.getByLevelAndGradeInTenant(
+//           level,
+//           grade,
+//           tenant_id
+//         );
+//         students.push(...studentsInDb);
+//       }
+//     }
 
-    return students;
-  } catch (error) {
-    throw error;
-  }
-}
+//     return students;
+//   } catch (error) {
+//     throw error;
+//   }
+// }
 
 // Create PCOSts
 export async function createAllPcosts(
@@ -171,18 +164,10 @@ export async function createAllPcosts(
   }
 }
 
-// Get grades by level
-export function getGradesByLevel(level: string) {
+// Get grades by grade
+export function getGrades(grade: string[]) {
   try {
-    if (level === "KG") {
-      return ["KG 1", "KG 2", "KG 3"];
-    } else if (level === "Elementary") {
-      return ["1", "2", "3", "4", "5", "6", "7", "8"];
-    } else if (level === "High School") {
-      return ["9", "10"];
-    } else if (level === "Preparatory") {
-      return ["11", "12"];
-    } else if (level === "All") {
+    if (grade[0] === "All") {
       return [
         "KG 1",
         "KG 2",
@@ -201,7 +186,7 @@ export function getGradesByLevel(level: string) {
         "12",
       ];
     } else {
-      throw new AppError("Level not recognized", 400);
+      throw new AppError("Grade not recognized", 400);
     }
   } catch (error) {
     throw error;

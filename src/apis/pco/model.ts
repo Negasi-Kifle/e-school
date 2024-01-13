@@ -35,17 +35,6 @@ const pcoSchema = new Schema(
       default: 0,
       min: [0, "Penality can not be less than zero"],
     },
-    levels: [
-      {
-        type: String,
-        default: "All",
-        enum: {
-          values: ["KG", "Elementary", "High School", "Preparatory", "All"],
-          message:
-            "Levels must be some from KG, Elementary, High School, Preparatory, All",
-        },
-      },
-    ],
     grades: [
       {
         type: String,

@@ -34,6 +34,22 @@ export default class Parent {
     return parent;
   }
 
+  // get by email
+  static async getParentByEmail(
+    email: string
+  ): Promise<IParentDoc | null> {
+    const parent = await ParentModel.findOne({ email});
+    return parent;
+  }
+
+  // get by email
+  static async getParentByOTP(
+    otp: string
+  ): Promise<IParentDoc | null> {
+    const parent = await ParentModel.findOne({ otp});
+    return parent;
+  }
+
   // Get all parents
   static async getAllParents(query?: RequestQuery): Promise<IParentDoc[]> {
     try {
@@ -129,6 +145,7 @@ export default class Parent {
   ): Promise<IParentDoc | null> {
     try {
       parent.password = password;
+      parent.is_credential_changed = true;
       await parent.save();
 
       return parent;
@@ -154,6 +171,22 @@ export default class Parent {
     }
   }
 
+  // change parent password
+  static async updateForgottenPswd(
+    parent: IParentDoc,
+    default_password: string
+  ): Promise<IParentDoc> {
+    try {
+      // Update
+      parent.password = default_password;
+      await parent.save();
+
+      return parent;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // Update parent account status
   static async updateParentAccountStatus(
     id: string,
@@ -170,6 +203,26 @@ export default class Parent {
       throw error;
     }
   }
+
+    // Update "otp" and "otp_expiry"
+    static async updateOTP(
+      id: string,
+      data: ParentRequest.IUpdateOTP
+    ): Promise<IParentDoc | null> {
+      try {
+        const user = await ParentModel.findByIdAndUpdate(
+          id,
+          { otp: data.otp, otp_expiry: data.otp_expiry },
+          {
+            runValidators: true,
+            new: true,
+          }
+        );
+        return user;
+      } catch (error) {
+        throw error;
+      }
+    }
 
   // Delete an parent permanently
   static async deleteParent(id: string): Promise<any | null> {

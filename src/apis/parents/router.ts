@@ -16,6 +16,8 @@ import {
   getAllParents,
   getParentChildren,
   getByPhoneNumber,
+  // updateForgottenPswd,
+  forgotPswd,
 } from "./controller";
 import {
   parentLoginValidation,
@@ -26,6 +28,7 @@ import {
   updateParentAccountStatusValidation,
   deleteAllParentsValidation,
   updatePasswordValidation,
+  validateForgotPswd,
 } from "./validation";
 
 import validator from "../../utils/validator";
@@ -76,6 +79,15 @@ router.patch(
   validator(updateParentAccountStatusValidation),
   updateParentAccountStatus
 );
+
+
+router.patch("/forgotpassword", validator(validateForgotPswd), forgotPswd);
+// router.patch(
+//   "/updateforgottenpswd",
+//   validator(validateForgotPswd),
+//   updateForgottenPswd
+// );
+
 
 router
   .route("/")

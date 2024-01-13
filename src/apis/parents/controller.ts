@@ -7,6 +7,7 @@ import configs from "../../configs";
 
 import generate_password from "../../utils/generate_password";
 import cloudinary from "../../utils/cloudinary";
+import otp_generator from "../../utils/otp_generator";
 
 // Create parent
 export const createParent: RequestHandler = async (req, res, next) => {
@@ -211,6 +212,11 @@ export const updatePhoneNumber: RequestHandler = async (req, res, next) => {
         "You have updated your phone number successfully. Please login again.";
     }
 
+    const exitsingPhone = await Parent.getParentByPhoneNumber(user.phone_number);
+    if(exitsingPhone && (exitsingPhone?.phone_number !== user.phone_number)){
+      return next(new AppError("There's already an existsing phone nummber.", 400))
+    }
+
     // Update
     const parent = await Parent.updatePhoneNumber(
       user.id,
@@ -293,7 +299,7 @@ export const resetParentPassword: RequestHandler = async (req, res, next) => {
     // Respond
     res.status(200).json({
       status: "SUCCESS",
-      message: "You have successfully resetted your password",
+      message: "Parent password resetted successfuly!",
       data: {
         parent,
       },
@@ -417,3 +423,135 @@ export const getParentChildren: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
+
+
+// Forgot password
+export const forgotPswd: RequestHandler = async (req, res, next) => {
+  try {
+    // Email from incoming data
+    const data = <ParentRequest.IForgotPswd>req.value;
+
+    // Check parent exists
+    const parent = await Parent.getParentByPhoneNumber(data.phone_number);
+    if (!parent)
+      return next(new AppError("Account not found", 404));
+
+    // Generate otp {otp}
+    const generateOtp = otp_generator();
+
+
+    // Message for the email
+
+    // Send the otp via sms
+    
+
+    // Update user data
+    const otp_expiry = new Date();
+    otp_expiry.setMinutes(otp_expiry.getMinutes() + 30);
+    const otpDate = {
+      otp: generateOtp.hashedOTP,
+      otp_expiry,
+    };
+
+    // Update clients "otp" and "otp_expiry"
+    await Parent.updateOTP(parent.id, otpDate);
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      message: "Password reseting OTP is sent to your phone.",
+      data:{otp: generateOtp.otp}
+
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+// verify otp
+export const verifyOTP: RequestHandler = async (req, res, next) => {
+  try {
+    // Incoming data
+    const data = req.body;
+
+    // Check first_account (user) exists
+    const user = await Parent.getParentByOTP(data.phone_number);
+    if (!user) return next(new AppError("Account does not exist", 404));
+
+    if(new Date() > new Date(user.otp_expiry)){
+      return next(new AppError("Link has expired", 400));
+    }
+
+    // Hash the otp for comparison and check otp expiry
+    if (!user.comparePassword(data.otp, user.otp))
+      return next(new AppError("Link has expired!", 400));
+
+    // Update "password", "otp" and "otp_expiry"
+    await Parent.updateOTP(user.id, {
+      otp: "",
+      otp_expiry: user.otp_expiry,
+    });
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      message: "OTP has been verified successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Reset password
+// export const updateForgottenPswd: RequestHandler = async (req, res, next) => {
+//   try {
+//     // Get body
+//     const data = <ParentRequest.IResetPswd>req.value;
+
+//     // Get client
+//     const client = await Parent.getParentByPhoneNumber(data.phone_number);
+//     if (!client)
+//       return next(
+//         new AppError("There is no parent with the specified phone number", 404)
+//       );
+
+//     // Check if there is a forgot pin process started
+//     if (!client.pin_reset_otp)
+//       return next(
+//         new AppError(
+//           "There is no forgot pin process started using this phone number",
+//           400
+//         )
+//       );
+
+//     // Check if pin and pin confirm are similar
+//     if (data.pin !== data.pin_confirm) {
+//       return next(new AppError("Pin and Pin confirm should be similar", 401));
+//     }
+
+//     // Check if the OTP is verified
+//     if (!client.is_pin_reset_otp_verified)
+//       return next(new AppError("OTP is not verified", 400));
+
+//     // Hash
+//     const { pin, pin_confirm } = hashPin(data.pin);
+
+//     // Update
+//     const updatedClient = await Client.resetPin(client._id, {
+//       pin,
+//       pin_confirm,
+//     });
+
+//     // Respond
+//     res.status(200).json({
+//       status: "SUCCESS",
+//       message: "You have successfully resetted your pin. Please login",
+//       data: {
+//         client: updatedClient,
+//       },
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };

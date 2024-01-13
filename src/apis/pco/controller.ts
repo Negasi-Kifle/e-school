@@ -28,7 +28,6 @@ export const createPCO: RequestHandler = async (req, res, next) => {
     pcoId = pco.id;
 
     const pcostData = <PCORequests.ICreatePcosts>{
-      levels: data.levels,
       grades: data.grades,
       tenant_id: data.tenant_id,
       pco: pco.id,
