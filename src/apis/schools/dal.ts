@@ -34,7 +34,10 @@ export default class School {
     id: string
   ): Promise<ISchoolDoc | null> {
     try {
-      const school = await SchoolModel.findByIdAndUpdate(id, data);
+      const school = await SchoolModel.findByIdAndUpdate(id, data, {
+        runValidators: true,
+        new: true,
+      });
       return school;
     } catch (error) {
       throw error;
