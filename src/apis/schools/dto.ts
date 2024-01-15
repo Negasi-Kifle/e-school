@@ -2,6 +2,7 @@ import { Document } from "mongoose";
 
 export default interface ISchoolDoc extends Document {
   school_name: string;
+  school_name_slug: string;
   school_address: string;
   license: string;
   level: string;
@@ -14,23 +15,25 @@ declare global {
   namespace SchoolRequest {
     interface ICreateSchoolInput {
       school_name: string;
+      school_name_slug: string;
       school_address: string;
       license: string;
       owner: string;
       level: string;
     }
-   
+
     interface IUpdateSchoolInput {
       school_name: string;
+      school_name_slug: string;
       school_address: string;
       license: string;
       level: string;
     }
 
-    interface IUpdateStatus{
-      status: string
+    interface IUpdateStatus {
+      status: string;
     }
- 
+
     interface IDeleteAllSchools {
       delete_key: string;
     }

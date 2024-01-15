@@ -6,6 +6,7 @@ import configs from "../../configs";
 import IAdminDoc from "../admin/dto";
 import UserDAL from "../users/dal";
 import IUsersDoc from "../users/dto";
+import slugifer from "../../utils/slugfier";
 
 // Create a school by admins of trust
 export const createSchoolByAdmin: RequestHandler = async (req, res, next) => {
@@ -17,11 +18,8 @@ export const createSchoolByAdmin: RequestHandler = async (req, res, next) => {
     const owner = await UserDAL.getOwnerById(data.owner);
     if (!owner) return next(new AppError("Unknown owner selected", 404));
 
-    //check school exists
-    const schoolInDb = await School.getSchoolByName(data.school_name);
-    if (schoolInDb) {
-      return next(new AppError("School already exists", 400));
-    }
+    // Slugify the school name
+    data.school_name_slug = slugifer(data.school_name.toLowerCase());
 
     // Create a school
     const school = await School.createSchool(data);
@@ -48,7 +46,9 @@ export const createSchoolByOwner: RequestHandler = async (req, res, next) => {
     data.owner = owner.id;
 
     //check school exists
-    const schoolInDb = await School.getSchoolByName(data.school_name);
+    const schoolInDb = await School.getSchoolByName(
+      data.school_name.toLowerCase()
+    );
     if (schoolInDb) {
       return next(new AppError("School already exists", 400));
     }
@@ -73,15 +73,8 @@ export const updateSchool: RequestHandler = async (req, res, next) => {
     // Get body
     const data = <SchoolRequest.ICreateSchoolInput>req.value;
 
-    //check school name is not taken
-    if (data.school_name) {
-      const school = await School.getSchool(req.params.id);
-
-      const schoolName = await School.getSchoolByName(data.school_name);
-      if (schoolName && school!.school_name) {
-        return next(new AppError("School Name already exists", 400));
-      }
-    }
+    // If school name is updated, update the slug too
+    if (data.school_name) data.school_name_slug = slugifer(data.school_name);
 
     // Update a school
     const schoolExists = await School.updateSchool(data, req.params.id);
