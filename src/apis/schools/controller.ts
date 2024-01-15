@@ -96,12 +96,13 @@ export const updateSchoolStatus: RequestHandler = async (req, res, next) => {
   try {
     const data = <SchoolRequest.IUpdateStatus>req.value;
 
-    const schools = await School.updateSchoolStatus(data, req.params.id);
+    const school = await School.updateSchoolStatus(data, req.params.id);
+    if (!school) return next(new AppError("School does not exist", 404));
 
     res.status(200).json({
       status: "SUCCESS",
       message: "School status changed successfuly",
-      data: { schools },
+      data: { school },
     });
   } catch (err) {
     next(err);
