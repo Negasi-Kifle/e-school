@@ -5,12 +5,20 @@ import IPCOSTDoc from "./dto";
 import configs from "../../configs";
 import IAdminDoc from "../admin/dto";
 import UserDAL from "../users/dal";
+import StudentDAL from "../students/dal";
 
 // Create a pcost
 export const createPCOST: RequestHandler = async (req, res, next) => {
   try {
     // Get body
     const data = <PCOSTRequest.ICreatePCOSTInput>req.value;
+
+    // Check student exists
+    const student = await StudentDAL.getStudentById(data.student);
+    if (!student) return next(new AppError("Student does not exist", 404));
+
+    // Add parent id of the student to "data"
+    data.parent = student.parent;
 
     // Create a pcost
     const pcost = await PCOST.createPCOST(data);
