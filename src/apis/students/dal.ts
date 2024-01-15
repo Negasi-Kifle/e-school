@@ -71,6 +71,18 @@ export default class StudentDAL {
     }
   }
 
+  // Get student in tenant
+  static async getStudentById(studId: string): Promise<IStudentDoc | null> {
+    try {
+      const student = await Student.findOne({
+        _id: studId,
+      });
+      return student;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // Update student info
   static async updateStudent(
     id: string,

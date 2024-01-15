@@ -7,9 +7,6 @@ export const createPCOSTValidation = Joi.object({
   student: Joi.string().required().messages({
     "any.required": "Select the related student",
   }),
-  parent: Joi.string().required().messages({
-    "any.required": "Select the related parent",
-  }),
   is_paid: Joi.boolean().messages({
     "boolean.base": "The field is_paid must be boolean",
   }),
