@@ -40,11 +40,11 @@ export default class PCOST {
           })
           .populate({
             path: "student",
-            select: "first_name last_name level",
+            select: "first_name last_name full_name level",
           })
           .populate({
             path: "parent",
-            select: "first_name last_name phone_number",
+            select: "first_name last_name full_name phone_number",
           }),
         query
       )
@@ -69,11 +69,11 @@ export default class PCOST {
         })
         .populate({
           path: "student",
-          select: "first_name last_name level",
+          select: "first_name last_name full_name level",
         })
         .populate({
           path: "parent",
-          select: "first_name last_name phone_number",
+          select: "first_name last_name full_name phone_number",
         });
       return pcost;
     } catch (error) {
@@ -91,11 +91,11 @@ export default class PCOST {
         })
         .populate({
           path: "student",
-          select: "first_name last_name level",
+          select: "first_name last_name full_name level",
         })
         .populate({
           path: "parent",
-          select: "first_name last_name phone_number",
+          select: "first_name last_name full_name phone_number",
         });
       return pcost;
     } catch (error) {
@@ -113,11 +113,11 @@ export default class PCOST {
         })
         .populate({
           path: "student",
-          select: "first_name last_name level",
+          select: "first_name last_name full_name level",
         })
         .populate({
           path: "parent",
-          select: "first_name last_name phone_number",
+          select: "first_name last_name full_name phone_number",
         });
       return pcost;
     } catch (error) {
@@ -135,11 +135,11 @@ export default class PCOST {
         })
         .populate({
           path: "student",
-          select: "first_name last_name level",
+          select: "first_name last_name full_name level",
         })
         .populate({
           path: "parent",
-          select: "first_name last_name phone_number",
+          select: "first_name last_name full_name phone_number",
         });
       return pcost;
     } catch (error) {

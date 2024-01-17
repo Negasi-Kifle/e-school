@@ -27,7 +27,7 @@ router
   .route("/")
   .post(
     protect,
-    auth("Super-admin", "Admin", "Call-center"),
+    auth("Super-admin", "Admin", "Call-center", "Owner"),
     validator(createPCOSTValidation),
     createPCOST
   )

@@ -11,7 +11,6 @@ const pcoSchema = new Schema(
     pmt_title_slug: {
       type: String,
       required: [true, "Slug of payment title is required"],
-      unique: true,
     },
     description: {
       type: String,
@@ -72,6 +71,10 @@ const pcoSchema = new Schema(
 
 // PCO model
 const PCO = mongoose.model<IPCODoc>("PCO", pcoSchema);
+
+// new Promise((resolve, reject)=>{
+//   resolve(PCO.collection.drop().catch((err)=> console.log(err)));
+// });
 
 // Export PCO model
 export default PCO;

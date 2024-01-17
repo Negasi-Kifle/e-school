@@ -1,5 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import ISchoolDoc from "./dto";
+import slugifer from "../../utils/slugfier";
+
 
 const schoolSchema: Schema = new Schema(
   {
@@ -71,6 +73,15 @@ const schoolSchema: Schema = new Schema(
     },
   }
 );
+
+// //Add slug  to school name creation and modification
+// schoolSchema.pre("save", function (this: ISchoolDoc, next){
+//   console.log("In side hook")
+//   if(this.isModified("school_name") || this.isNew){
+//     this.school_name_slug = slugifer(this.school_name);
+//   }
+//   next();
+// });
 
 const SchoolModel = mongoose.model<ISchoolDoc>("School", schoolSchema);
 

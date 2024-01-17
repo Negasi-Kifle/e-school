@@ -75,6 +75,10 @@ const studentsSchema = new Schema(
   }
 );
 
+studentsSchema.virtual("full_name").get(function (this: IStudentDoc) {
+  return `${this.first_name} ${this.last_name}`;
+});
+
 // Student model
 const Student = mongoose.model<IStudentDoc>("Student", studentsSchema);
 
