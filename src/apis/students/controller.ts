@@ -32,12 +32,12 @@ export const createStudent: RequestHandler = async (req, res, next) => {
     if (!school) return next(new AppError("School is required", 404));
 
     // If user role is "Owner", check he/she owns the school
-    if (
-      loggedInUser.role === "Owner" &&
-      school.owner.toString() !== loggedInUser.id
-    ) {
-      return next(new AppError("You don't own this school", 400));
-    }
+    // if (
+    //   loggedInUser.role === "Owner" &&
+    //   school.owner.toString() !== loggedInUser.id
+    // ) {
+    //   return next(new AppError("You don't own this school", 400));
+    // }
 
     // Create student
     const student = await Student.createStudent(data);
