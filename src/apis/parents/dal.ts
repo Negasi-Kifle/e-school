@@ -35,18 +35,14 @@ export default class Parent {
   }
 
   // get by email
-  static async getParentByEmail(
-    email: string
-  ): Promise<IParentDoc | null> {
-    const parent = await ParentModel.findOne({ email});
+  static async getParentByEmail(email: string): Promise<IParentDoc | null> {
+    const parent = await ParentModel.findOne({ email });
     return parent;
   }
 
   // get by email
-  static async getParentByOTP(
-    otp: string
-  ): Promise<IParentDoc | null> {
-    const parent = await ParentModel.findOne({ otp});
+  static async getParentByOTP(otp: string): Promise<IParentDoc | null> {
+    const parent = await ParentModel.findOne({ otp });
     return parent;
   }
 
@@ -91,7 +87,7 @@ export default class Parent {
     }
   }
 
-  static async comparePassword(candidatePassword: string, password: string){
+  static async comparePassword(candidatePassword: string, password: string) {
     return bcrypt.compareSync(candidatePassword, password);
   }
 
@@ -204,25 +200,25 @@ export default class Parent {
     }
   }
 
-    // Update "otp" and "otp_expiry"
-    static async updateOTP(
-      id: string,
-      data: ParentRequest.IUpdateOTP
-    ): Promise<IParentDoc | null> {
-      try {
-        const user = await ParentModel.findByIdAndUpdate(
-          id,
-          { otp: data.otp, otp_expiry: data.otp_expiry },
-          {
-            runValidators: true,
-            new: true,
-          }
-        );
-        return user;
-      } catch (error) {
-        throw error;
-      }
+  // Update "otp" and "otp_expiry"
+  static async updateOTP(
+    id: string,
+    data: ParentRequest.IUpdateOTP
+  ): Promise<IParentDoc | null> {
+    try {
+      const user = await ParentModel.findByIdAndUpdate(
+        id,
+        { otp: data.otp, otp_expiry: data.otp_expiry },
+        {
+          runValidators: true,
+          new: true,
+        }
+      );
+      return user;
+    } catch (error) {
+      throw error;
     }
+  }
 
   // Delete an parent permanently
   static async deleteParent(id: string): Promise<any | null> {
@@ -246,7 +242,10 @@ export default class Parent {
   // Get students by parent
   static async getStudentsOfParent(parent: string): Promise<IStudentDoc[]> {
     try {
-      const students = await Student.find({ parent });
+      const students = await Student.find({ parent }).populate({
+        path: "tenant_id",
+        select: "school_name school_address",
+      });
       return students;
     } catch (error) {
       throw error;
