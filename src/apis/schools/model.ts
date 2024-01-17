@@ -24,6 +24,10 @@ const schoolSchema: Schema = new Schema(
       maxlength: [500, "School Address can not exceed 500 characters"],
       minlength: [1, "School Address can not be less than 1 character"],
     },
+    school_logo: {
+      secure_url: String,
+      public_id: String,
+    },
     license: {
       type: String,
       required: [true, "License is required"],
