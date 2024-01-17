@@ -80,6 +80,21 @@ export default class PCODAL {
     }
   }
 
+  // Get PCO by slug
+  static async getPCOBySlugAndTenant(
+    pmt_title_slug: string,
+    tenant_id: string
+  ): Promise<IPCODoc | null> {
+    try {
+      
+      const school = await PCO.findOne({ $and: [{tenant_id}, {pmt_title_slug}] });
+      console.log(school)
+      return school;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // Update PCO info
   static async updatePCO(
     id: string,

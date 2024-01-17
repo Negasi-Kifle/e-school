@@ -45,13 +45,7 @@ export const createSchoolByOwner: RequestHandler = async (req, res, next) => {
     const owner = <IUsersDoc>req.user;
     data.owner = owner.id;
 
-    //check school exists
-    const schoolInDb = await School.getSchoolByName(
-      data.school_name.toLowerCase()
-    );
-    if (schoolInDb) {
-      return next(new AppError("School already exists", 400));
-    }
+    data.school_name_slug = slugifer(data.school_name.toLowerCase());
 
     // Create a school
     const school = await School.createSchool(data);
