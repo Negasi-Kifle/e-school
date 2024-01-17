@@ -14,7 +14,7 @@ export default async function createPcosts(
   try {
     // Check levels and grades
     if (
-      data.grades.length >= 1
+      data.grades.length >= 1 && data.grades[0] !== "All"
     ) {
       // Get all students for the selected grades
       const students = await manyGrades(
@@ -24,16 +24,13 @@ export default async function createPcosts(
 
       // Create all PCOSts for the students
       await createAllPcosts(students, data.pco);
-    } else if (
-      data.grades.length === 1 &&
-      data.grades[0] === "All"
-    ) {
+    } else if (data.grades.length === 1 && data.grades[0] === "All") {
       // Get all students for the selected grades
       const students = await allGrades(data.tenant_id);
 
       // Create all PCOSts for the students
       await createAllPcosts(students, data.pco);
-    } 
+    }
     // else if (
     //   data.levels.length >= 1 &&
     //   !data.levels.includes("All") &&
@@ -50,9 +47,9 @@ export default async function createPcosts(
     //   // Create all PCOSts for the students
     //   await createAllPcosts(students, data.pco);
     // }
-     else {
-      throw new AppError("Unable to create PCOSts", 400);
-    }
+    //  else {
+    //   throw new AppError("Unable to create PCOSts", 400);
+    // }
   } catch (error) {
     throw error;
   }
@@ -95,6 +92,7 @@ export async function allGrades(
     const numOfStudents = await StudentDAL.countTenantStudents(tenant_id);
     const batchSize = 10;
 
+    
     // Fetch students by batch and add them to the temporary array
     for (let i = 0; i < numOfStudents; i += batchSize) {
       const studentsInTenant = await StudentDAL.getStudentsInTenant(tenant_id, {
@@ -103,7 +101,6 @@ export async function allGrades(
       });
       students.push(...studentsInTenant);
     }
-
     return students;
   } catch (error) {
     throw new Error(`Failed to fetch students: ${error}`);
