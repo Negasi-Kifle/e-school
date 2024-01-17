@@ -64,6 +64,12 @@ export const validateCreateAPI = Joi.object({
     "string.empty": "What is the sex of the student?",
     "any.only": "Sex must either Male or Female",
   }),
+  role_num: Joi.string().messages({
+    "string.empty": "Role number can not be empty",
+  }),
+  blood_group: Joi.string().messages({
+    "string.empty": "Blood group can not be empty",
+  }),
   parent_phone_num: Joi.string().required().messages({
     "any.required": "Phone number of parent is required",
     "string.empty": "Phone number of parent is required",
