@@ -187,3 +187,22 @@ export const deleteAllPCOSTs: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
+
+// Get all unpaid fees of a student
+export const getUnpaidFeesOfStudent: RequestHandler = async (
+  req,
+  res,
+  next
+) => {
+  try {
+    const unpaidFees = await PCOST.getUnpaidFeeOfStudent(req.params.studId);
+
+    // Response
+    res.status(200).json({
+      status: "SUCCESS",
+      data: { unpaidFees },
+    });
+  } catch (error) {
+    next(error);
+  }
+};

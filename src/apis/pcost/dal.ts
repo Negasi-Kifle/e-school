@@ -165,4 +165,17 @@ export default class PCOST {
       throw error;
     }
   }
+
+  // Get number of unpaid fees for a student
+  static async getUnpaidFeeOfStudent(student: string): Promise<number> {
+    try {
+      const unpaidFees = await PCOSTModel.countDocuments({
+        student,
+        is_paid: false,
+      });
+      return unpaidFees;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
