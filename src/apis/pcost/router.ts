@@ -11,6 +11,7 @@ import {
   getPCOSTByPCOSTtudent,
   getPCOSTByParent,
   getPCOSTs,
+  getUnpaidFeesOfStudent,
   updatePCOST,
 } from "./controller";
 import {
@@ -38,6 +39,13 @@ router
     validator(deleteAllPCOSTsValidation),
     deleteAllPCOSTs
   );
+
+router.get(
+  "/unpaidfees/:studId",
+  protect,
+  auth("Super-admin", "Admin", "Call-center", "Owner", "Parent"),
+  getUnpaidFeesOfStudent
+);
 
 router.get(
   "/pco/:id",
