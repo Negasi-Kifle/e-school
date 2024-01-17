@@ -65,7 +65,7 @@ router
   .get(protect, auth("Super-admin", "Admin", "Call-center"), getPCOSTById)
   .patch(
     protect,
-    auth("Super-admin", "Admin", "Call-center"),
+    auth("Super-admin", "Admin", "Call-center", "Owner"),
     validator(updatePCOSTValidation),
     updatePCOST
   )
