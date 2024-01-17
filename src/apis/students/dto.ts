@@ -8,6 +8,8 @@ export default interface IStudentDoc extends Document {
   grade: string;
   birth_date: Date;
   sex: "Male" | "Female";
+  role_num: string;
+  blood_group: string;
   parent: string;
   parent_relation: string;
   tenant_id: string;
@@ -32,6 +34,8 @@ declare global {
       grade: string;
       birth_date: Date;
       sex: "Male" | "Female";
+      role_num: string;
+      blood_group: string;
       parent: string;
       parent_phone_num: string;
       parent_relation: string;
@@ -45,6 +49,8 @@ declare global {
       grade: string;
       birth_date: Date;
       sex: "Male" | "Female";
+      role_num: string;
+      blood_group: string;
       parent: string;
       parent_relation: string;
       tenant_id: string;
