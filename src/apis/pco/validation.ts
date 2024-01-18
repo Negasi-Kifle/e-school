@@ -78,7 +78,7 @@ export const validateUpdateAPI = Joi.object({
   description: Joi.string().messages({
     "string.empty": "Describe the payment collection order",
   }),
-  start_date: Joi.date().min("now").messages({
+  start_date: Joi.date().messages({
     "date.min": "Start date can not be in the past",
   }),
   deadline: Joi.date().min(Joi.ref("start_date")).messages({
