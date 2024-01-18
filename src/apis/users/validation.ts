@@ -16,7 +16,7 @@ export const validateCreateUserAPI = Joi.object({
     "string.empty": "Phone number is requried",
   }),
   role: Joi.string()
-    .valid("Owner", "Director", "Teacher", "Assistant", "Teacher")
+    .valid("Owner", "Director", "Teacher", "Assistant", "Teacher", "Registrar")
     .required()
     .messages({
       "any.required": "Role is required",
