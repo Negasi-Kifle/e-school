@@ -50,7 +50,7 @@ router.get(
 router.get(
   "/pco/:id",
   protect,
-  auth("Super-admin", "Admin", "Call-center", "Owner", "Parent"),
+  auth("Super-admin", "Admin", "Call-center", "Owner", "Parent", "Director"),
   getPCOSTByPCO
 );
 
