@@ -23,11 +23,14 @@ export const createPCO: RequestHandler = async (req, res, next) => {
     const data = <PCORequests.ICreatePCO>req.value;
     data.pmt_title_slug = slugifer(data.pmt_title.toLowerCase()); // Slugify the title
 
-    const existsingPCO = await PCO.getPCOBySlugAndTenant(data.pmt_title_slug, data.tenant_id)
-    if(existsingPCO){
+    const existsingPCO = await PCO.getPCOBySlugAndTenant(
+      data.pmt_title_slug,
+      data.tenant_id
+    );
+    if (existsingPCO) {
       return next(new AppError("PCO already exitsts", 404));
     }
-    
+
     // Create PCO
     const pco = await PCO.createPCO(data);
     pcoId = pco.id;
@@ -37,8 +40,6 @@ export const createPCO: RequestHandler = async (req, res, next) => {
       tenant_id: data.tenant_id,
       pco: pco.id,
     };
-
-    console.log(pcostData)
 
     // Create all PCOSts for the selected levels and grades
     await createPcosts(pcostData);
@@ -50,7 +51,6 @@ export const createPCO: RequestHandler = async (req, res, next) => {
       data: { pco },
     });
   } catch (error) {
-    console.log(error)
     if (pcoId !== "PcoId") await PCO.deleteById(pcoId);
     next(error);
   }
