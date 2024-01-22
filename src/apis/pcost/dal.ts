@@ -76,9 +76,9 @@ export default class PCOST {
   }
 
   // Get a pcost by PCO id
-  static async getPCOSTByPCO(id: string): Promise<IPCOSTDoc | null> {
+  static async getPCOSTByPCO(id: string): Promise<IPCOSTDoc[] | null> {
     try {
-      const pcost = await PCOSTModel.findOne({ pco: id })
+      const pcost = await PCOSTModel.find({ pco: id })
         .populate({ path: "pco" })
         .populate({
           path: "student",

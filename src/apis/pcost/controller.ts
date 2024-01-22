@@ -121,7 +121,7 @@ export const getPCOSTByPCO: RequestHandler = async (req, res, next) => {
 
     res.status(200).json({
       status: "SUCCESS",
-      data: { pcost: [pcost] },
+      data: { pcost: pcost },
     });
   } catch (err) {
     next(err);
