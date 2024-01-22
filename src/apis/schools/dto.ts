@@ -4,11 +4,18 @@ export default interface ISchoolDoc extends Document {
   school_name: string;
   school_name_slug: string;
   school_address: string;
+  school_logo: ILogo;
   license: string;
   level: string;
   owner: string;
   createdAt: Date;
   updatedAt: Date;
+}
+
+// Logo url in cloudinary
+export interface ILogo {
+  secure_url: string;
+  public_id: string;
 }
 
 declare global {
@@ -17,6 +24,7 @@ declare global {
       school_name: string;
       school_name_slug: string;
       school_address: string;
+      school_logo: ILogo;
       license: string;
       owner: string;
       level: string;
@@ -26,6 +34,7 @@ declare global {
       school_name: string;
       school_name_slug: string;
       school_address: string;
+      school_logo: ILogo;
       license: string;
       level: string;
     }

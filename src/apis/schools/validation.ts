@@ -7,6 +7,17 @@ export const createSchoolValidation = Joi.object({
     "string.empty": "What is the name of the school?",
   }),
   school_address: Joi.string().required(),
+  school_logo: Joi.object({
+    secure_url: Joi.string().required().messages({
+      "any.required": "Secure URL of the logo is required",
+      "string.empty": "Secure URL of the logo is required",
+      "string.base": "Secure URL must be a string",
+    }),
+    public_id: Joi.string().required().messages({
+      "any.required": "Public Id of the logo is required",
+      "string.empty": "Public Id of the logo is required",
+    }),
+  }),
   license: Joi.string().required(),
   owner: Joi.string().required().messages({
     "any.required": "Who owns the school?",
@@ -30,6 +41,20 @@ export const createSchoolByOwnerValidation = Joi.object({
     "string.empty": "What is the name of the school?",
   }),
   school_address: Joi.string().required(),
+  school_logo: Joi.object({
+    secure_url: Joi.string().required().messages({
+      "any.required": "Secure URL of the logo is required",
+      "string.empty": "Secure URL of the logo is required",
+      "string.base": "Secure URL must be a string",
+    }),
+    public_id: Joi.string().required().messages({
+      "any.required": "Public Id of the logo is required",
+      "string.empty": "Public Id of the logo is required",
+    }),
+  }).messages({
+    "object.base":
+      "School logo must be an object with secure_url and public_id keys",
+  }),
   license: Joi.string().required(),
   level: Joi.array()
     .items("KG", "Elementary", "High-School", "Preparatory", "All")
@@ -45,6 +70,17 @@ export const createSchoolByOwnerValidation = Joi.object({
 export const updateSchoolValidation = Joi.object({
   school_name: Joi.string().optional(),
   school_address: Joi.string().optional(),
+  school_logo: Joi.object({
+    secure_url: Joi.string().required().messages({
+      "any.required": "Secure URL of the logo is required",
+      "string.empty": "Secure URL of the logo is required",
+      "string.base": "Secure URL must be a string",
+    }),
+    public_id: Joi.string().required().messages({
+      "any.required": "Public Id of the logo is required",
+      "string.empty": "Public Id of the logo is required",
+    }),
+  }),
   license: Joi.string().optional(),
   level: Joi.string()
     .optional()

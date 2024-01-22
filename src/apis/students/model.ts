@@ -52,6 +52,8 @@ const studentsSchema = new Schema(
         message: "Sex must be Male or Female",
       },
     },
+    role_num: Number,
+    blood_group: String,
     parent: { type: Schema.ObjectId, ref: "Parent" },
     parent_relation: String,
     tenant_id: {

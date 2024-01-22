@@ -43,7 +43,7 @@ export const createSchoolByOwner: RequestHandler = async (req, res, next) => {
 
     // Check the owner exists
     const owner = <IUsersDoc>req.user;
-    data.owner = owner.id;
+    data.owner = owner.id; // Add id of the logged in user
 
     data.school_name_slug = slugifer(data.school_name.toLowerCase());
 

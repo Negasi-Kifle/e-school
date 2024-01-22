@@ -16,13 +16,13 @@ export const validateCreateUserAPI = Joi.object({
     "string.empty": "Phone number is requried",
   }),
   role: Joi.string()
-    .valid("Owner", "Director", "Teacher", "Assistant", "Teacher")
+    .valid("Owner", "Director", "Teacher", "Assistant", "Teacher", "Registrar")
     .required()
     .messages({
       "any.required": "Role is required",
       "string.empty": "Role is required",
       "any.only":
-        "Role must be one of 'Owner', 'Director', 'Assistant', or 'Teacher'",
+        "Role must be one of 'Owner', 'Director', 'Assistant', 'Registrar', or 'Teacher'",
     }),
   address: Joi.string().required().messages({
     "any.required": "Address is required",

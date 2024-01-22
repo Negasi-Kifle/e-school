@@ -11,6 +11,7 @@ import {
   getPCOSTByPCOSTtudent,
   getPCOSTByParent,
   getPCOSTs,
+  getUnpaidFeesOfStudent,
   updatePCOST,
 } from "./controller";
 import {
@@ -40,16 +41,39 @@ router
   );
 
 router.get(
+  "/unpaidfees/:studId",
+  protect,
+  auth(
+    "Super-admin",
+    "Admin",
+    "Call-center",
+    "Owner",
+    "Parent",
+    "Director",
+    "Registrar"
+  ),
+  getUnpaidFeesOfStudent
+);
+
+router.get(
   "/pco/:id",
   protect,
-  auth("Super-admin", "Admin", "Call-center", "Owner", "Parent"),
+  auth("Super-admin", "Admin", "Call-center", "Owner", "Parent", "Director"),
   getPCOSTByPCO
 );
 
 router.get(
   "/student/:id",
   protect,
-  auth("Super-admin", "Admin", "Call-center", "Owner", "Parent"),
+  auth(
+    "Super-admin",
+    "Admin",
+    "Call-center",
+    "Owner",
+    "Parent",
+    "Director",
+    "Registrar"
+  ),
   getPCOSTByPCOSTtudent
 );
 
@@ -65,7 +89,7 @@ router
   .get(protect, auth("Super-admin", "Admin", "Call-center"), getPCOSTById)
   .patch(
     protect,
-    auth("Super-admin", "Admin", "Call-center", "Owner"),
+    auth("Super-admin", "Admin", "Call-center", "Owner", "Director"),
     validator(updatePCOSTValidation),
     updatePCOST
   )

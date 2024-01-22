@@ -34,10 +34,7 @@ export default class PCOST {
       // const pcosts = await PCOSTModel.find();
       const apiFeature = new APIFeatures<IPCOSTDoc>(
         PCOSTModel.find()
-          .populate({
-            path: "pco",
-            select: "pmt_title start_date deadline amount penality penality",
-          })
+          .populate({ path: "pco" })
           .populate({
             path: "student",
             select: "first_name last_name full_name level",
@@ -63,10 +60,7 @@ export default class PCOST {
   static async getPCOST(id: string): Promise<IPCOSTDoc | null> {
     try {
       const pcost = await PCOSTModel.findById(id)
-        .populate({
-          path: "pco",
-          select: "pmt_title start_date deadline amount penality",
-        })
+        .populate({ path: "pco" })
         .populate({
           path: "student",
           select: "first_name last_name full_name level",
@@ -85,10 +79,7 @@ export default class PCOST {
   static async getPCOSTByPCO(id: string): Promise<IPCOSTDoc | null> {
     try {
       const pcost = await PCOSTModel.findOne({ pco: id })
-        .populate({
-          path: "pco",
-          select: "pmt_title start_date deadline amount penality",
-        })
+        .populate({ path: "pco" })
         .populate({
           path: "student",
           select: "first_name last_name full_name level",
@@ -107,10 +98,7 @@ export default class PCOST {
   static async getPCOSTByStudent(id: string): Promise<IPCOSTDoc | null> {
     try {
       const pcost = await PCOSTModel.findOne({ student: id })
-        .populate({
-          path: "pco",
-          select: "pmt_title start_date deadline amount penality",
-        })
+        .populate({ path: "pco" })
         .populate({
           path: "student",
           select: "first_name last_name full_name level",
@@ -129,10 +117,7 @@ export default class PCOST {
   static async getPCOSTByParent(id: string): Promise<IPCOSTDoc[]> {
     try {
       const pcost = await PCOSTModel.find({ parent: id })
-        .populate({
-          path: "pco",
-          select: "pmt_title start_date deadline amount penality",
-        })
+        .populate({ path: "pco" })
         .populate({
           path: "student",
           select: "first_name last_name full_name level",
@@ -161,6 +146,19 @@ export default class PCOST {
   static async deleteAllPCOSTs() {
     try {
       await PCOSTModel.deleteMany({});
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Get number of unpaid fees for a student
+  static async getUnpaidFeeOfStudent(student: string): Promise<number> {
+    try {
+      const unpaidFees = await PCOSTModel.countDocuments({
+        student,
+        is_paid: false,
+      });
+      return unpaidFees;
     } catch (error) {
       throw error;
     }
