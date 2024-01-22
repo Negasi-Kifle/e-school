@@ -19,6 +19,7 @@ export const createPCOST: RequestHandler = async (req, res, next) => {
 
     // Add parent id of the student to "data"
     data.parent = student.parent;
+    data.is_paid_at = new Date();
 
     // Create a pcost
     const pcost = await PCOST.createPCOST(data);

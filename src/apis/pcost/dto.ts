@@ -7,6 +7,7 @@ export default interface IPCOSTDoc extends Document {
   is_paid: boolean;
   is_before_deadline: boolean;
   paid_amount: number;
+  is_paid_at: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -20,6 +21,7 @@ declare global {
       is_paid: boolean;
       is_before_deadline: boolean;
       paid_amount: number;
+      is_paid_at: Date;
     }
    
     interface IUpdatePCOSTInput {
