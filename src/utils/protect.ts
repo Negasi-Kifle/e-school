@@ -14,7 +14,8 @@ export default async (req: Request, res: Response, next: NextFunction) => {
       "Teacher",
       "Assistant",
       "Teacher",
-      "Parent"
+      "Parent",
+      "Registrar",
     ];
 
     // Token
@@ -80,17 +81,18 @@ export default async (req: Request, res: Response, next: NextFunction) => {
       req.user = admin;
     } else if (clientRoles.includes(decodedData.role)) {
       // Get client
-      let user : any= await User.getUserById(decodedData.id);
-      
+      let user: any = await User.getUserById(decodedData.id);
+
       //if client does not exist check he / she is a parent
       if (!user) {
         user = await Parent.getParent(decodedData.id);
-        if(user){
-
-          if(user.is_default_password && req.url !== "/defaultpassword"){
-            return next(new AppError("Please change your default password", 400));
+        if (user) {
+          if (user.is_default_password && req.url !== "/defaultpassword") {
+            return next(
+              new AppError("Please change your default password", 400)
+            );
           }
-        }else{
+        } else {
           return next(new AppError("User does not exist", 400));
         }
       }
