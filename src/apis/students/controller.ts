@@ -15,9 +15,7 @@ export const createStudent: RequestHandler = async (req, res, next) => {
 
     // Check user is in the same tenant
     const loggedInUser = <IUsersDoc>req.user;
-    if (
-      loggedInUser.role !== "Owner" &&
-      loggedInUser.tenant_id !== req.params.tenantId
+    if (loggedInUser.tenant_id !== req.params.tenantId
     ) {
       return next(new AppError("You don't belong to this school", 400));
     }
