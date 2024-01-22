@@ -23,13 +23,13 @@ router
   .route("/:tenantId")
   .post(
     protect,
-    auth("Owner", "Director", "Teacher"),
+    auth("Owner", "Director", "Teacher", "Registral"),
     validate(validateCreateAPI),
     createStudent
   )
   .get(
     protect,
-    auth("Super-admin", "Owner", "Director", "Teacher"),
+    auth("Super-admin", "Owner", "Director", "Teacher", "Registral"),
     getStudentsInTenant
   )
   .delete(
@@ -45,18 +45,18 @@ router
   .route("/tenant/:tenantId/student/:studId")
   .get(
     protect,
-    auth("Super-admin", "Owner", "Director", "Teacher"),
+    auth("Super-admin", "Owner", "Director", "Teacher", "Registral"),
     getStudentInTenant
   )
   .patch(
     protect,
-    auth("Owner", "Director", "Teacher"),
+    auth("Owner", "Director", "Teacher", "Registral"),
     validate(validateUpdateAPI),
     updateStudent
   )
   .delete(
     protect,
-    auth("Owner", "Director", "Teacher"),
+    auth("Owner", "Director", "Teacher", "Registral"),
     validate(validateDeleteAllAPI),
     deleteStudInTenant
   );

@@ -93,19 +93,19 @@ router
   .route("/")
   .post(
     protect,
-    auth("Super-admin", "Owner", "Director", "Teacher"),
+    auth("Super-admin", "Owner", "Director", "Teacher", "Registral"),
     upload.single("picture"),
     validator(createParentValidation),
     createParent
   )
   .get(
     protect,
-    auth("Super-admin", "Owner", "Teacher", "Director", "Admin"),
+    auth("Super-admin", "Owner", "Teacher", "Director", "Admin", "Registral"),
     getAllParents
   )
   .delete(
     protect,
-    auth("Super-admin"),
+    auth("Super-admin", "Registral"),
     validator(deleteAllParentsValidation),
     deleteAllParents
   );
@@ -114,15 +114,15 @@ router
   .route("/:id")
   .get(
     protect,
-    auth("Super-admin", "Parent", "Owner", "Call-center"),
+    auth("Super-admin", "Parent", "Owner", "Call-center", "Registral"),
     getParent
   )
-  .delete(protect, auth("Super-admin"), deleteParent);
+  .delete(protect, auth("Super-admin", "Registral"), deleteParent);
 
 router.get(
   "/children/:parentId",
   protect,
-  auth("Super-admin", "Parent", "Call-center", "Owner", "Teacher", "Director"),
+  auth("Super-admin", "Parent", "Call-center", "Owner", "Teacher", "Director", "Registral"),
   getParentChildren
 );
 
